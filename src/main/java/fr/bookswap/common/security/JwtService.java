@@ -4,12 +4,10 @@ import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 @ApplicationScoped
-public class JwtUtils {
+public class JwtService {
 
     @ConfigProperty(name = "mp.jwt.verify.issuer")
     String issuer;

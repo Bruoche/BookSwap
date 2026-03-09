@@ -1,5 +1,6 @@
 package fr.bookswap.common.entity;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -8,7 +9,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "author")
-public class Author {
+public class Author extends PanacheEntity {
 
     @NotBlank(message = "Le prénom est obligatoire")
     @Size(max = 100, message = "Le prénom ne doit pas dépasser 100 caractères")

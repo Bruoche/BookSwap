@@ -1,7 +1,7 @@
 package fr.bookswap.auth;
 
 import fr.bookswap.common.entity.User;
-import fr.bookswap.common.security.JwtUtils;
+import fr.bookswap.common.security.JwtService;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,7 +15,7 @@ import java.util.Set;
 public class AuthService {
 
     @Inject
-    JwtUtils jwtService;
+    JwtService jwtService;
 
     /**
      * Vérifie les credentials et retourne un token JWT
