@@ -4,6 +4,7 @@ import fr.bookswap.common.entity.User;
 import fr.bookswap.auth.dto.LoginRequest;
 import fr.bookswap.auth.dto.LoginResponse;
 import fr.bookswap.auth.dto.RegisterRequest;
+import fr.bookswap.common.exception.ErrorResponse;
 import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -11,6 +12,9 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
+
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @Path("/api/auth")
 @Produces(MediaType.APPLICATION_JSON)
@@ -45,5 +49,44 @@ public class AuthResource {
         LOG.info("Inscription : " + request.username);
         User user = authService.register(request.username, request.password, request.email);
         return Response.status(Response.Status.CREATED).entity(user).build();
+    }
+
+    @GET
+    @Path("/me")
+    public Response userProfile() { //TODO
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(Map.of(
+                        "timestamp", LocalDateTime.now().toString(),
+                        "status", 500,
+                        "error", "Not implemented.",
+                        "message", "This request has not yet been implemented"
+                ))
+                .build();
+    }
+
+    @PUT
+    @Path("/me")
+    public Response editProfile() { //TODO
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(Map.of(
+                        "timestamp", LocalDateTime.now().toString(),
+                        "status", 500,
+                        "error", "Not implemented.",
+                        "message", "This request has not yet been implemented"
+                ))
+                .build();
+    }
+
+    @POST
+    @Path("/refresh")
+    public Response refreshToken() { //TODO
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(Map.of(
+                        "timestamp", LocalDateTime.now().toString(),
+                        "status", 500,
+                        "error", "Not implemented.",
+                        "message", "This request has not yet been implemented"
+                ))
+                .build();
     }
 }
