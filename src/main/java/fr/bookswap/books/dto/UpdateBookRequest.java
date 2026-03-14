@@ -8,7 +8,7 @@ import jakarta.validation.constraints.*;
 
 import java.util.Set;
 
-public class UpdateBookDto {
+public class UpdateBookRequest {
 
     @NotEmpty(message = "L'ID du livre est necessaire pour l'update")
     public Long id;
