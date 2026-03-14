@@ -3,6 +3,7 @@ package fr.bookswap.books;
 import fr.bookswap.books.dto.UpdateBookRequest;
 import fr.bookswap.common.entity.Author;
 import fr.bookswap.common.entity.Book;
+import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.security.JwtService;
 import io.quarkus.security.ForbiddenException;
@@ -10,6 +11,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +35,16 @@ public class BookService {
     }
 
     @Transactional
-    public Book createBook(Book book) {
-        bookRepository.persist(book);
-        return book;
+    public Book createBook(Long userId, UpdateBookRequest bookDto) {
+        Book newBook = bookDto.toBook();
+        User user = User.findById(userId);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
+        newBook.createdBy = user;
+        newBook.createdAt = OffsetDateTime.now();
+        bookRepository.persist(newBook);
+        return newBook;
     }
 
     @Transactional

@@ -11,10 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-
 
 @Path("/api/books")
 @Produces(MediaType.APPLICATION_JSON)
@@ -42,15 +39,8 @@ public class BookResource {
     }
 
     @POST
-    public Response add() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
+    public Book add(UpdateBookRequest  updateBookRequest) {
+        return bookService.createBook(jwtService.getUserId(), updateBookRequest);
     }
 
     @PUT
