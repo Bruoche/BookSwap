@@ -1,11 +1,13 @@
 package fr.bookswap.books;
 
+import fr.bookswap.books.dto.BookDetailsResponse;
 import fr.bookswap.books.dto.UpdateBookRequest;
 import fr.bookswap.common.entity.Author;
 import fr.bookswap.common.entity.Book;
 import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.security.JwtService;
+import fr.bookswap.review.ReviewRepository;
 import io.quarkus.security.ForbiddenException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -24,9 +26,16 @@ public class BookService {
     @Inject
     BookRepository bookRepository;
 
-    public Book getBookById(Long id) {
-        return bookRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException(id));
+    @Inject
+    ReviewRepository reviewRepository;
+
+    public BookDetailsResponse getBookById(Long bookId) {
+        Book book = bookRepository.findById(bookId);
+        if (book == null) {
+            throw new NotFoundException("This book doesn't exist");
+        }
+        Double averageRating = reviewRepository.getAverageRating(bookId);
+        return new BookDetailsResponse(book, averageRating);
     }
 
     @Transactional
@@ -70,11 +79,8 @@ public class BookService {
     }
 
     @Transactional
-    public void deleteBook(Long bookId, Long userId) {
-        Book book = bookRepository.findById(bookId);
-        if (book.createdBy.id.equals(userId)) {
-            bookRepository.deleteById(bookId);
-        }
+    public void deleteBook(Long bookId) {
+        bookRepository.deleteById(bookId);
     }
 
     @Transactional
