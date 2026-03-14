@@ -5,6 +5,7 @@ import fr.bookswap.common.entity.Book;
 import fr.bookswap.common.entity.Review;
 import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
+import fr.bookswap.common.security.JwtService;
 import fr.bookswap.review.dto.CreateReviewDto;
 import fr.bookswap.user.UserRepository;
 import io.quarkus.security.UnauthorizedException;
@@ -29,11 +30,11 @@ public class ReviewService {
     UserRepository userRepository;
 
     @Inject
-    JsonWebToken jwt;
+    JwtService jwtService;
 
     @Transactional
     public Review addReview(Long bookId, CreateReviewDto dto) {
-        Long currentUserId = Long.valueOf(jwt.getSubject());
+        Long currentUserId = jwtService.getUserId();
         User currentUser = userRepository.findById(currentUserId);
         if (currentUser == null) {
             throw new UnauthorizedException("Authenticated user not found in database.");

@@ -32,12 +32,8 @@ public class JwtService {
                 .sign();
     }
 
-    public String getSubject() {
-        return jwt.getSubject();
-    }
-
     public Long getUserId() {
-        String sub = getSubject();
+        String sub = jwt.getSubject();
         if (sub == null || sub.isBlank()) {
             throw new UnauthorizedException("User ID not found in token");
         }
