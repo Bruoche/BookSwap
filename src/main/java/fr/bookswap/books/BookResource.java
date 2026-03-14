@@ -65,30 +65,4 @@ public class BookResource {
         bookService.deleteBook(bookId, jwtService.getUserId());
         return Response.ok().build();
     }
-
-    @GET
-    @Path("/{id}/reviews")
-    public Response getReviews() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
-    }
-
-    @POST
-    @Path("/{id}/reviews")
-    public Response addReview() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
-    }
 }
