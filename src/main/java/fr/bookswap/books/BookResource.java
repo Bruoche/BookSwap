@@ -10,7 +10,9 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.reactive.RestQuery;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Path("/api/books")
@@ -28,8 +30,12 @@ public class BookResource {
     JwtService jwtService;
 
     @GET
-    public List<Book> getAll() { // To verify
-        return bookService.getAllBooks();
+    public List<Book> getAll(
+            @RestQuery String author,
+            @RestQuery String genre,
+            @RestQuery int publicationYear
+    ) {
+        return bookService.getAllBooks(author, genre, publicationYear);
     }
 
     @GET
