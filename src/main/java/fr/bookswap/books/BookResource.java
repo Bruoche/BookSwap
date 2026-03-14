@@ -44,21 +44,24 @@ public class BookResource {
         return bookService.getBookById(id);
     }
 
+    @RolesAllowed({"USER", "ADMIN"})
     @POST
     public Book add(UpdateBookRequest  updateBookRequest) {
         return bookService.createBook(jwtService.getUserId(), updateBookRequest);
     }
 
+    @RolesAllowed({"USER", "ADMIN"})
     @PUT
     @Path("/{id}")
     public Book edit(UpdateBookRequest updateBookRequest, @PathParam("id") Long bookId) {
         return bookService.updateBookById(bookId, jwtService.getUserId(), updateBookRequest);
     }
 
+    @RolesAllowed({"ADMIN"})
     @DELETE
     @Path("/{id}")
     public Response remove(@PathParam("id") Long bookId) {
-        bookService.deleteBook(bookId, jwtService.getUserId());
+        bookService.deleteBook(bookId);
         return Response.ok().build();
     }
 }
