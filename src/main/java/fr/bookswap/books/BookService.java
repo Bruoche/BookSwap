@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.quarkus.hibernate.orm.panache.PanacheEntityBase.find;
+
 @ApplicationScoped
 public class BookService {
 
@@ -39,9 +41,22 @@ public class BookService {
     }
 
     @Transactional
-    public Book updateBookById(UpdateBookRequest bookUpdate) {
+    public Book updateBookById(Long bookId, UpdateBookRequest bookUpdate) {
         Long currentUserId = Long.valueOf(jwtService.getSubject());
-        return bookRepository.update(currentUserId, bookUpdate);
+
+        Book targetedBook = find("id = ?1 and ownerId = ?2", bookId, currentUserId).firstResult();
+        if  (targetedBook == null) {
+            throw new ForbiddenException("Book not found or you are not the owner.");
+        }
+        targetedBook.authors = bookUpdate.authors;
+        targetedBook.title = bookUpdate.title;
+        targetedBook.description = bookUpdate.description;
+        targetedBook.coverUrl = bookUpdate.coverUrl;
+        targetedBook.isbn = bookUpdate.isbn;
+        targetedBook.publicationYear = bookUpdate.publicationYear;
+        targetedBook.genres = bookUpdate.genres;
+
+        return targetedBook;
     }
 
     @Transactional

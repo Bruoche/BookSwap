@@ -13,22 +13,6 @@ public class BookRepository implements PanacheRepository<Book> {
     @Inject
     JwtService jwt;
 
-    @Transactional
-    public Book update(Long userId, UpdateBookRequest bookUpdate) {
-        Book targetedBook = find("id = ?1 and ownerId = ?2", bookUpdate.id, userId).firstResult();
-        if  (targetedBook == null) {
-            throw new ForbiddenException("Book not found or you are not the owner.");
-        }
-        targetedBook.authors = bookUpdate.authors;
-        targetedBook.title = bookUpdate.title;
-        targetedBook.description = bookUpdate.description;
-        targetedBook.coverUrl = bookUpdate.coverUrl;
-        targetedBook.isbn = bookUpdate.isbn;
-        targetedBook.publicationYear = bookUpdate.publicationYear;
-        targetedBook.genres = bookUpdate.genres;
-
-        return targetedBook;
-    }
 
     @Transactional
     public boolean deleteIfOwned(Long currentUserId, Long id) {
