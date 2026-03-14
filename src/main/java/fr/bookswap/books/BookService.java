@@ -60,11 +60,11 @@ public class BookService {
     }
 
     @Transactional
-    public void deleteBook(Long id) {
+    public void deleteBook(Long bookId) {
         Long currentUserId = jwtService.getUserId();
-        boolean deleted = bookRepository.deleteIfOwned(currentUserId, id);
-        if (!deleted) {
-            throw new ForbiddenException("You do not have permission to delete this book.");
+        Book book = bookRepository.findById(bookId);
+        if (book.createdBy.id.equals(currentUserId)) {
+            bookRepository.deleteById(bookId);
         }
     }
 
