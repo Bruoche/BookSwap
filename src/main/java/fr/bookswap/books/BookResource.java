@@ -1,5 +1,6 @@
 package fr.bookswap.books;
 
+import fr.bookswap.books.dto.BookDetailsResponse;
 import fr.bookswap.books.dto.UpdateBookRequest;
 import fr.bookswap.common.entity.Book;
 import fr.bookswap.common.security.JwtService;
@@ -40,7 +41,7 @@ public class BookResource {
 
     @GET
     @Path("/{id}")
-    public Book getDetails(@PathParam("id") Long id) { //TODO
+    public BookDetailsResponse getDetails(@PathParam("id") Long id) {
         return bookService.getBookById(id);
     }
 
