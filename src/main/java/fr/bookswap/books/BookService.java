@@ -30,8 +30,12 @@ public class BookService {
     }
 
     @Transactional
-    public List<Book> getAllBooks() {
-        return bookRepository.listAll();
+    public List<Book> getAllBooks(String author, String genre, int startDate) {
+        String query = "(?1 is null or author = ?1) " +
+                "and (?2 is null or genre = ?2) " +
+                "and (?3 is null or publicationYear >= ?3)";
+
+        return bookRepository.find(query, author, genre, startDate).list();
     }
 
     @Transactional
