@@ -1,15 +1,15 @@
 package fr.bookswap.books.dto;
 
 import fr.bookswap.common.entity.Author;
+import fr.bookswap.common.entity.Book;
 import fr.bookswap.common.entity.Genre;
-import fr.bookswap.common.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.util.Set;
 
 public class UpdateBookRequest {
-    
+
     @NotBlank(message = "L'ISBN est obligatoire")
     @Size(min = 10, max = 13, message = "L'ISBN d'un livre doit faire 13 caractères (10 pour les livres d'avant 2007)")
     public String isbn;
@@ -30,11 +30,23 @@ public class UpdateBookRequest {
     @Column
     public String coverUrl;
 
-    public User createdBy;
-
     @NotEmpty(message = "Il doit y avoir au moins un auteur")
     public Set<Author> authors;
 
     @NotEmpty(message = "Il faut au moins renseigner un genre")
     public Set<Genre> genres;
+
+    public UpdateBookRequest() {}
+
+    public Book toBook() {
+        Book book = new Book();
+        book.isbn = isbn;
+        book.title = title;
+        book.description = description;
+        book.publicationYear = publicationYear;
+        book.coverUrl = coverUrl;
+        book.authors = authors;
+        book.genres = genres;
+        return book;
+    }
 }
