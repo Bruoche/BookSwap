@@ -12,8 +12,8 @@ import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 
 @Path("/api/books")
@@ -31,14 +31,14 @@ public class BookResource {
     JwtService jwtService;
 
     @GET
-    public Response getAll() { // To verify
-        return Response.ok(bookService.getAllBooks()).build();
+    public List<Book> getAll() { // To verify
+        return bookService.getAllBooks();
     }
 
     @GET
     @Path("/{id}")
-    public Response getDetails(@PathParam("id") Long id) { //TODO
-        return Response.ok(bookService.getBookById(id)).build();
+    public Book getDetails(@PathParam("id") Long id) { //TODO
+        return bookService.getBookById(id);
     }
 
     @POST
