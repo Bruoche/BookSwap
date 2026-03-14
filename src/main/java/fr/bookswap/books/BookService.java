@@ -1,13 +1,10 @@
 package fr.bookswap.books;
 
-import fr.bookswap.books.dto.UpdateBookDto;
+import fr.bookswap.books.dto.UpdateBookRequest;
 import fr.bookswap.common.entity.Author;
 import fr.bookswap.common.entity.Book;
-import fr.bookswap.common.entity.Review;
-import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.security.JwtService;
-import fr.bookswap.review.ReviewRepository;
 import io.quarkus.security.ForbiddenException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -42,7 +39,7 @@ public class BookService {
     }
 
     @Transactional
-    public Book updateBookById(UpdateBookDto bookUpdate) {
+    public Book updateBookById(UpdateBookRequest bookUpdate) {
         Long currentUserId = Long.valueOf(jwtService.getSubject());
         return bookRepository.update(currentUserId, bookUpdate);
     }
