@@ -1,12 +1,9 @@
 package fr.bookswap.books;
 
-import fr.bookswap.books.dto.BookDetailsResponse;
-import fr.bookswap.books.dto.CreateReviewDto;
 import fr.bookswap.books.dto.UpdateBookRequest;
 import fr.bookswap.common.entity.Book;
-import fr.bookswap.common.entity.Review;
 import fr.bookswap.common.security.JwtService;
-import jakarta.annotation.security.PermitAll;
+import fr.bookswap.exchange.ExchangeResource;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -59,13 +56,8 @@ public class BookResource {
     @DELETE
     @Path("/{id}")
     public Response remove(@PathParam("id") Long bookId) {
-        bookService.deleteBook(bookId);
+        bookService.deleteBook(bookId, jwtService.getUserId());
         return Response.ok().build();
-    }
-
-    @Path("/{id}/reviews")
-    public Review addReview(CreateReviewDto reviewDto, @PathParam("id") Long bookId) {
-        return bookService.addReview(bookId, jwtService.getUserId(), reviewDto);
     }
 
     @GET
