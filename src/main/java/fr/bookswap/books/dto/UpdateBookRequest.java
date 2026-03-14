@@ -9,10 +9,7 @@ import jakarta.validation.constraints.*;
 import java.util.Set;
 
 public class UpdateBookRequest {
-
-    @NotEmpty(message = "L'ID du livre est necessaire pour l'update")
-    public Long id;
-
+    
     @NotBlank(message = "L'ISBN est obligatoire")
     @Size(min = 10, max = 13, message = "L'ISBN d'un livre doit faire 13 caractères (10 pour les livres d'avant 2007)")
     public String isbn;
