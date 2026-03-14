@@ -32,18 +32,10 @@ public class JwtService {
                 .sign();
     }
 
-    /**
-     * Gets the 'sub' claim (Subject) from the token.
-     * In most setups, this is the User ID or Username.
-     */
     public String getSubject() {
         return jwt.getSubject();
     }
 
-    /**
-     * Specifically for your BookRepository:
-     * Extracts the Subject and converts it to a Long.
-     */
     public Long getUserId() {
         String sub = getSubject();
         if (sub == null || sub.isBlank()) {

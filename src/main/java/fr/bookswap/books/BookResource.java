@@ -1,6 +1,8 @@
 package fr.bookswap.books;
 
+import fr.bookswap.books.dto.UpdateBookRequest;
 import fr.bookswap.common.entity.Book;
+import fr.bookswap.common.security.JwtService;
 import fr.bookswap.exchange.ExchangeResource;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -24,6 +26,9 @@ public class BookResource {
 
     @Inject
     BookService bookService;
+
+    @Inject
+    JwtService jwtService;
 
     @GET
     public Response getAll() { // To verify
@@ -50,28 +55,15 @@ public class BookResource {
 
     @PUT
     @Path("/{id}")
-    public Response edit() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
+    public Book edit(UpdateBookRequest updateBookRequest, @PathParam("id") Long bookId) {
+        return bookService.updateBookById(bookId, jwtService.getUserId(), updateBookRequest);
     }
 
     @DELETE
     @Path("/{id}")
-    public Response remove() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
+    public Response remove(@PathParam("id") Long bookId) {
+        bookService.deleteBook(bookId, jwtService.getUserId());
+        return Response.ok().build();
     }
 
     @GET
