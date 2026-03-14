@@ -59,10 +59,4 @@ public class BookResource {
         bookService.deleteBook(bookId, jwtService.getUserId());
         return Response.ok().build();
     }
-
-    @GET
-    @Path("/{id}/reviews")
-    public List<Review> getReviews(@PathParam("id") Long bookId) {
-        return bookService.getReviews(bookId);
-    }
 }
