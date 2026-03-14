@@ -1,13 +1,12 @@
 package fr.bookswap.books;
 
-import fr.bookswap.books.dto.UpdateBookDto;
+import fr.bookswap.books.dto.UpdateBookRequest;
 import fr.bookswap.common.entity.Book;
 import fr.bookswap.common.security.JwtService;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.security.ForbiddenException;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 
 public class BookRepository implements PanacheRepository<Book> {
 
@@ -15,7 +14,7 @@ public class BookRepository implements PanacheRepository<Book> {
     JwtService jwt;
 
     @Transactional
-    public Book update(Long userId, UpdateBookDto bookUpdate) {
+    public Book update(Long userId, UpdateBookRequest bookUpdate) {
         Book targetedBook = find("id = ?1 and ownerId = ?2", bookUpdate.id, userId).firstResult();
         if  (targetedBook == null) {
             throw new ForbiddenException("Book not found or you are not the owner.");
