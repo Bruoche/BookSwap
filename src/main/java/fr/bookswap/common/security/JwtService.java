@@ -15,7 +15,7 @@ public class JwtService {
     @ConfigProperty(name = "mp.jwt.verify.issuer")
     String issuer;
 
-    Inject
+    @Inject
     JsonWebToken jwt;
 
     /**
