@@ -21,9 +21,6 @@ public class BookService {
     @Inject
     BookRepository bookRepository;
 
-    @Inject
-    JwtService jwtService;
-
     public Book getBookById(Long id) {
         return bookRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException(id));
@@ -41,10 +38,9 @@ public class BookService {
     }
 
     @Transactional
-    public Book updateBookById(Long bookId, UpdateBookRequest bookUpdate) {
-        Long currentUserId = Long.valueOf(jwtService.getSubject());
+    public Book updateBookById(Long bookId, Long userId, UpdateBookRequest bookUpdate) {
 
-        Book targetedBook = find("id = ?1 and ownerId = ?2", bookId, currentUserId).firstResult();
+        Book targetedBook = find("id = ?1 and ownerId = ?2", bookId, userId).firstResult();
         if  (targetedBook == null) {
             throw new ForbiddenException("Book not found or you are not the owner.");
         }
@@ -60,10 +56,9 @@ public class BookService {
     }
 
     @Transactional
-    public void deleteBook(Long bookId) {
-        Long currentUserId = jwtService.getUserId();
+    public void deleteBook(Long bookId, Long userId) {
         Book book = bookRepository.findById(bookId);
-        if (book.createdBy.id.equals(currentUserId)) {
+        if (book.createdBy.id.equals(userId)) {
             bookRepository.deleteById(bookId);
         }
     }
