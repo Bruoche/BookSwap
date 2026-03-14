@@ -9,14 +9,20 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.jboss.logging.Logger;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+
 
 @Path("/api/books")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@RolesAllowed({"USER", "ADMIN"})
+@RolesAllowed({"USER", "ADMIN"})  // Are we sure there is no completely open endpoint ?
 public class BookResource {
+
+    private static final Logger LOG = Logger.getLogger(ExchangeResource.class);
 
     @Inject
     BookService bookService;
@@ -25,25 +31,26 @@ public class BookResource {
     JwtService jwtService;
 
     @GET
-	@PermitAll
-    public List<Book> getAll(
-            @QueryParam("author") String author,
-            @QueryParam("genre") String genre,
-            @QueryParam("publicationYear") int publicationYear
-    ) {
-        return bookService.getAllBooks(author, genre, publicationYear);
+    public List<Book> getAll() { // To verify
+        return bookService.getAllBooks();
     }
 
     @GET
     @Path("/{id}")
-	@PermitAll
-    public BookDetailsResponse getDetails(@PathParam("id") Long id) {
+    public Book getDetails(@PathParam("id") Long id) { //TODO
         return bookService.getBookById(id);
     }
 
     @POST
-    public Book add(UpdateBookRequest  updateBookRequest) {
-        return bookService.createBook(jwtService.getUserId(), updateBookRequest);
+    public Response add() { //TODO
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(Map.of(
+                        "timestamp", LocalDateTime.now().toString(),
+                        "status", 500,
+                        "error", "Not implemented.",
+                        "message", "This request has not yet been implemented"
+                ))
+                .build();
     }
 
     @PUT
@@ -52,7 +59,6 @@ public class BookResource {
         return bookService.updateBookById(bookId, jwtService.getUserId(), updateBookRequest);
     }
 
-    @RolesAllowed({"ADMIN"})
     @DELETE
     @Path("/{id}")
     public Response remove(@PathParam("id") Long bookId) {
