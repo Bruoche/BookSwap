@@ -3,6 +3,7 @@ package fr.bookswap.exchange;
 import fr.bookswap.common.entity.Exchange;
 import fr.bookswap.common.security.JwtService;
 import fr.bookswap.exchange.dto.CreateExchangeRequest;
+import fr.bookswap.exchange.dto.ExchangeResponse;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -26,15 +27,23 @@ public class ExchangeResource {
     JwtService jwt;  // Token JWT de l'utilisateur connecté
 
     @GET
-    public List<Exchange> getExchanges(@QueryParam("status") String status) {
-        if (status != null && !status.isBlank()) return exchangeService.searchUserExchanges(status, jwt.getUserId());
-        return exchangeService.getUserExchanges(jwt.getUserId());
+    public List<ExchangeResponse> getExchanges(@QueryParam("status") String status) {
+        if (status != null && !status.isBlank()) {
+			return exchangeService.searchUserExchanges(status, jwt.getUserId())
+				.stream()
+				.map(exchange -> ExchangeResponse.fromExchange(exchange))
+				.toList();
+		}
+        return exchangeService.getUserExchanges(jwt.getUserId())
+			.stream()
+			.map(exchange -> ExchangeResponse.fromExchange(exchange))
+			.toList();
     }
 
     @GET
     @Path("/{id}")
-    public Exchange getExchangeById(@PathParam("id") Long id) {
-        return exchangeService.getUserExchangeById(id, jwt.getUserId());
+    public ExchangeResponse getExchangeById(@PathParam("id") Long id) {
+        return ExchangeResponse.fromExchange(exchangeService.getUserExchangeById(id, jwt.getUserId()));
     }
 
     @POST
@@ -47,13 +56,13 @@ public class ExchangeResource {
 
     @PATCH
     @Path("/{id}/accept")
-    public Exchange acceptExchange(@PathParam("id") Long id) {
-        return exchangeService.acceptExchange(id, jwt.getUserId());
+    public ExchangeResponse acceptExchange(@PathParam("id") Long id) {
+        return ExchangeResponse.fromExchange(exchangeService.acceptExchange(id, jwt.getUserId()));
     }
 
     @PATCH
     @Path("/{id}/refuse")
-    public Exchange refuseExchange(@PathParam("id") Long id) {
-        return exchangeService.refuseExchange(id, jwt.getUserId());
+    public ExchangeResponse refuseExchange(@PathParam("id") Long id) {
+        return ExchangeResponse.fromExchange(exchangeService.refuseExchange(id, jwt.getUserId()));
     }
 }

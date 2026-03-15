@@ -13,17 +13,17 @@ import java.time.LocalDateTime;
 public class Exchange extends PanacheEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotBlank(message = "Le demandeur est obligatoire")
+    @NotNull(message = "Le demandeur est obligatoire")
     @JoinColumn(nullable = false)
     public User requester;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotBlank(message = "Le possesseur est obligatoire")
+    @NotNull(message = "Le possesseur est obligatoire")
     @JoinColumn(nullable = false)
     public User owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotBlank(message = "Le livre est obligatoire")
+    @NotNull(message = "Le livre est obligatoire")
     @JoinColumn(nullable = false)
     public UserBook book;
 
