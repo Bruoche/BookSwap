@@ -39,7 +39,7 @@ public class ExchangeResource {
 
     @POST
     public Response createExchange(@Valid CreateExchangeRequest request) {
-        Exchange created = exchangeService.createExchange(request.toExchange(), jwt.getUserId());
+        Exchange created = exchangeService.createExchange(request.toExchange(jwt.getUserId()));
         return Response.created(URI.create("/api/exchanges/" + created.id))
                 .entity(created)
                 .build();

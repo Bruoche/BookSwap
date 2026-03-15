@@ -17,7 +17,7 @@ public class ExchangeService {
     ExchangeRepository exchangeRepository;
 
     public List<Exchange> getUserExchanges(Long userId) {
-        return exchangeRepository.listAllForUser(userId); // TODO : faire selon l'utilisateur (reçues ou envoyées)
+        return exchangeRepository.listAllForUser(userId);
     }
 
     public List<Exchange> searchUserExchanges(String keyword, Long userId) {
@@ -34,9 +34,9 @@ public class ExchangeService {
     }
 
     @Transactional  // Les modifications en BD doivent être dans une transaction
-    public Exchange createExchange(Exchange exchange, Long userId) {
-		if (exchange.owner.id != userId) {
-			throw new UnauthorizedException("Vous ne pouvez pas créer un échange sur un livre ne vous appartenant pas.");
+    public Exchange createExchange(Exchange exchange) {
+		if (exchange.owner.id == exchange.book.user.id) {
+			throw new UnauthorizedException("Vous ne pouvez pas échanger un livre avec vous-même.");
 		}
 		if (exchange.book.status != UserBook.Status.OWNED) {
 			throw new UnauthorizedException("Le livre proposé en échange doit avoir le status \"OWNED\" dans votre bibliothèque personelle.");
