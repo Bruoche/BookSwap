@@ -27,7 +27,7 @@ public class AuthService {
             throw new NotAuthorizedException("Identifiants invalides");
         }
 
-        return jwtService.generateToken(user.username, user.roles);
+        return jwtService.generateToken(user.id, user.username, user.roles);
     }
 
     /**
