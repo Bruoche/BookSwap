@@ -4,14 +4,19 @@ import fr.bookswap.books.dto.BookDetailsResponse;
 import fr.bookswap.books.dto.UpdateBookRequest;
 import fr.bookswap.common.entity.Author;
 import fr.bookswap.common.entity.Book;
+import fr.bookswap.common.entity.Review;
 import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.security.JwtService;
 import fr.bookswap.review.ReviewRepository;
+import fr.bookswap.review.dto.CreateReviewDto;
+import fr.bookswap.user.UserRepository;
 import io.quarkus.security.ForbiddenException;
+import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -28,6 +33,9 @@ public class BookService {
 
     @Inject
     ReviewRepository reviewRepository;
+
+    @Inject
+    UserRepository userRepository;
 
     public BookDetailsResponse getBookById(Long bookId) {
         Book book = bookRepository.findById(bookId);
@@ -90,5 +98,44 @@ public class BookService {
             throw new ForbiddenException("Unkown book id: " + id);
         }
         return new ArrayList<>(book.authors);
+    }
+
+    @Transactional
+    public Review addReview(Long bookId, Long currentUserId, CreateReviewDto dto) {
+        User currentUser = userRepository.findById(currentUserId);
+        if (currentUser == null) {
+            throw new UnauthorizedException("Authenticated user not found in database.");
+        }
+
+        Book book = bookRepository.findById(bookId);
+        if (book == null) {
+            throw new NotFoundException("Book not found with ID: " + bookId);
+        }
+
+        long existing = reviewRepository.count("author = ?1 and book = ?2", currentUser, book);
+        if (existing > 0) {
+            throw new BadRequestException("You have already reviewed this book.");
+        }
+
+        Review review = new Review(
+                currentUser,
+                book,
+                dto.rating,
+                dto.comment
+        );
+
+        reviewRepository.persist(review);
+
+        return review;
+    }
+
+    @Transactional
+    public List<Review>  getReviews(Long bookId) {
+        Book book = bookRepository.findById(bookId);
+        // Need to handle error with interceptors ?
+        if (book == null) {
+            throw new NotFoundException("Book not found with ID: " + bookId);
+        }
+        return reviewRepository.findByBookId(bookId);
     }
 }
