@@ -4,7 +4,6 @@ import fr.bookswap.common.entity.User;
 import fr.bookswap.auth.dto.LoginRequest;
 import fr.bookswap.auth.dto.LoginResponse;
 import fr.bookswap.auth.dto.RegisterRequest;
-import fr.bookswap.common.exception.ErrorResponse;
 import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;

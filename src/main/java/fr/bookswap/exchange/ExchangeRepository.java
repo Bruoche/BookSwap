@@ -9,10 +9,11 @@ import java.util.List;
 @ApplicationScoped
 public class ExchangeRepository implements PanacheRepository<Exchange> {
 
-    // PanacheRepository fournit déjà : listAll(), findById(), persist(), deleteById()...
-    // On ajoute seulement les requêtes spécifiques :
+    public List<Exchange> searchByStatusForUser(Exchange.Status status, Long id) {
+        return list("status = ?1 and (requester.id = ?2 or owner.id = ?2)", status, id);
+    }
 
-    public List<Exchange> searchByStatus(Exchange.Status status) {
-        return list("status", status);
+    public List<Exchange> listAllForUser(Long id) {
+        return list("requester.id = ?1 or owner.id = ?1", id);
     }
 }

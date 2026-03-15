@@ -6,7 +6,6 @@ import jakarta.validation.constraints.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,22 +17,28 @@ public class Exchange extends PanacheEntity {
     @JoinColumn(nullable = false)
     public User requester;
 
-    @Size(max = 500, message = "La description ne doit pas dépasser 500 caractères")
-    @Column(length = 500)
-    public String description;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotBlank(message = "Le possesseur est obligatoire")
+    @JoinColumn(nullable = false)
+    public User owner;
 
-    @NotNull(message = "Le statut est obligatoire")
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    public Exchange.Status status = Status.PENDING;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotBlank(message = "Le livre est obligatoire")
+    @JoinColumn(nullable = false)
+    public UserBook book;
 
     @NotNull(message = "Le type est obligatoire")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public Exchange.Type type;
 
+    @NotNull(message = "Le statut est obligatoire")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    public Exchange.Status status = Status.PENDING;
+
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "requested_at", nullable = false, updatable = false)
     public LocalDateTime requestedAt;
 
     @UpdateTimestamp
@@ -43,11 +48,11 @@ public class Exchange extends PanacheEntity {
     // Constructeur par défaut requis par JPA
     public Exchange() {}
 
-    public Exchange(User requester, String description, Type type) {
+    public Exchange(User requester, UserBook userBook, Type type) {
         this.requester = requester;
-        this.description = description;
+		this.owner = userBook.user;
+		this.book = userBook;
         this.type = type;
-        this.status = Status.PENDING;
     }
 
     public enum Status {

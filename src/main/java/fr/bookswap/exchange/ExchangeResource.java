@@ -1,6 +1,7 @@
 package fr.bookswap.exchange;
 
 import fr.bookswap.common.entity.Exchange;
+import fr.bookswap.common.security.JwtService;
 import fr.bookswap.exchange.dto.CreateExchangeRequest;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -8,8 +9,6 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.jboss.logging.Logger;
 
 import java.net.URI;
 import java.util.List;
@@ -20,29 +19,27 @@ import java.util.List;
 @RolesAllowed({"USER", "ADMIN"})  // Tous les endpoints nécessitent USER ou ADMIN
 public class ExchangeResource {
 
-    private static final Logger LOG = Logger.getLogger(ExchangeResource.class);
-
     @Inject
     ExchangeService exchangeService;
 
     @Inject
-    JsonWebToken jwt;  // Token JWT de l'utilisateur connecté
+    JwtService jwt;  // Token JWT de l'utilisateur connecté
 
     @GET
     public List<Exchange> getExchanges(@QueryParam("status") String status) {
-        if (status != null && !status.isBlank()) return exchangeService.searchExchanges(status);
-        return exchangeService.getAllExchanges();
+        if (status != null && !status.isBlank()) return exchangeService.searchUserExchanges(status, jwt.getUserId());
+        return exchangeService.getUserExchanges(jwt.getUserId());
     }
 
     @GET
     @Path("/{id}")
     public Exchange getExchangeById(@PathParam("id") Long id) {
-        return exchangeService.getExchangeById(id);
+        return exchangeService.getUserExchangeById(id, jwt.getUserId());
     }
 
     @POST
     public Response createExchange(@Valid CreateExchangeRequest request) {
-        Exchange created = exchangeService.createExchange(request.toExchange());
+        Exchange created = exchangeService.createExchange(request.toExchange(jwt.getUserId()));
         return Response.created(URI.create("/api/exchanges/" + created.id))
                 .entity(created)
                 .build();
@@ -51,12 +48,12 @@ public class ExchangeResource {
     @PATCH
     @Path("/{id}/accept")
     public Exchange acceptExchange(@PathParam("id") Long id) {
-        return exchangeService.acceptExchange(id);
+        return exchangeService.acceptExchange(id, jwt.getUserId());
     }
 
     @PATCH
     @Path("/{id}/refuse")
     public Exchange refuseExchange(@PathParam("id") Long id) {
-        return exchangeService.refuseExchange(id);
+        return exchangeService.refuseExchange(id, jwt.getUserId());
     }
 }
