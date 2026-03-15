@@ -48,12 +48,11 @@ public class Exchange extends PanacheEntity {
     // Constructeur par défaut requis par JPA
     public Exchange() {}
 
-    public Exchange(User requester, UserBook userBook, Status status, Type type) {
+    public Exchange(User requester, UserBook userBook, Type type) {
         this.requester = requester;
 		this.owner = userBook.user;
 		this.book = userBook;
         this.type = type;
-        this.status = Status.PENDING;
     }
 
     public enum Status {
