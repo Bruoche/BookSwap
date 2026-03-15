@@ -3,8 +3,10 @@ package fr.bookswap.books;
 import fr.bookswap.books.dto.BookDetailsResponse;
 import fr.bookswap.books.dto.UpdateBookRequest;
 import fr.bookswap.common.entity.Book;
+import fr.bookswap.common.entity.Review;
 import fr.bookswap.common.security.JwtService;
 import fr.bookswap.exchange.ExchangeResource;
+import fr.bookswap.review.dto.CreateReviewDto;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -13,7 +15,6 @@ import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.RestQuery;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Path("/api/books")
@@ -64,5 +65,18 @@ public class BookResource {
     public Response remove(@PathParam("id") Long bookId) {
         bookService.deleteBook(bookId);
         return Response.ok().build();
+    }
+
+    @RolesAllowed({"USER", "ADMIN"})
+    @Path("/{id}/reviews")
+    public Review addReview(CreateReviewDto reviewDto, @PathParam("id") Long bookId) {
+        return bookService.addReview(bookId, jwtService.getUserId(), reviewDto);
+    }
+
+    @RolesAllowed({"USER", "ADMIN"})
+    @GET
+    @Path("/{id}/reviews")
+    public List<Review> getReviews(@PathParam("id") Long bookId) {
+        return bookService.getReviews(bookId);
     }
 }
