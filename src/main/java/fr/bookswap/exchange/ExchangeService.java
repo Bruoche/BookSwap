@@ -3,10 +3,10 @@ package fr.bookswap.exchange;
 import fr.bookswap.common.entity.Exchange;
 import fr.bookswap.common.entity.UserBook;
 import fr.bookswap.common.exception.NotFoundException;
-import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import fr.bookswap.common.exception.BadRequestException;
 
 import java.util.List;
 
@@ -35,11 +35,12 @@ public class ExchangeService {
 
     @Transactional  // Les modifications en BD doivent être dans une transaction
     public Exchange createExchange(Exchange exchange) {
-		if (exchange.owner.id == exchange.book.user.id) {
-			throw new UnauthorizedException("Vous ne pouvez pas échanger un livre avec vous-même.");
+		// TODO check exchange not exist already 
+		if (exchange.requester.id == exchange.book.user.id) {
+			throw new BadRequestException("Vous ne pouvez pas échanger un livre avec vous-même.");
 		}
 		if (exchange.book.status != UserBook.Status.OWNED) {
-			throw new UnauthorizedException("Le livre proposé en échange doit avoir le status \"OWNED\" dans votre bibliothèque personelle.");
+			throw new BadRequestException("Le livre proposé en échange doit avoir le status \"OWNED\" dans la bibliothèque de l'échangeur.");
 		}
         exchangeRepository.persist(exchange);
         return exchange;

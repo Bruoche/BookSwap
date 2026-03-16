@@ -2,9 +2,6 @@ package fr.bookswap.exchange.dto;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import fr.bookswap.common.entity.Exchange;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -25,12 +22,10 @@ public class ExchangeResponse {
 
     @NotNull(message = "Le statut est obligatoire")
     @Enumerated(EnumType.STRING)
-    public Exchange.Status status = Exchange.Status.PENDING;
+    public Exchange.Status status;
 
-    @CreationTimestamp
     public LocalDateTime requestedAt;
 
-    @UpdateTimestamp
     public LocalDateTime updatedAt;
 
     // Constructeur par défaut requis par JPA
@@ -40,6 +35,10 @@ public class ExchangeResponse {
         ExchangeResponse dto = new ExchangeResponse();
 		dto.ownerName = exchange.owner.username;
 		dto.book = ExchangedBookDto.fromBook(exchange.book);
+		dto.type = exchange.type;
+		dto.status = exchange.status;
+		dto.requestedAt = exchange.requestedAt;
+		dto.updatedAt = exchange.updatedAt;
 		return dto;
     }
 	
