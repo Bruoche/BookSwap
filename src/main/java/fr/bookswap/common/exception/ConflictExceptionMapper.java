@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @Provider  // Enregistre automatiquement ce mapper dans JAX-RS
-public class BadRequestExceptionMapper implements ExceptionMapper<BadRequestException> {
+public class ConflictExceptionMapper implements ExceptionMapper<ConflictException> {
 
     @Override
-    public Response toResponse(BadRequestException exception) {
-        return Response.status(Response.Status.BAD_REQUEST)
+    public Response toResponse(ConflictException exception) {
+        return Response.status(Response.Status.CONFLICT)
                 .entity(Map.of(
                         "timestamp", LocalDateTime.now().toString(),
-                        "status", 400,
-                        "error", "Bad Request",
+                        "status", 409,
+                        "error", "Conflict",
                         "message", exception.getMessage()
                 ))
                 .build();

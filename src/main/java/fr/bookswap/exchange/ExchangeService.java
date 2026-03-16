@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import fr.bookswap.common.exception.BadRequestException;
+import fr.bookswap.common.exception.ConflictException;
 
 import java.util.List;
 
@@ -36,7 +37,9 @@ public class ExchangeService {
 
     @Transactional  // Les modifications en BD doivent être dans une transaction
     public Exchange createExchange(Exchange exchange) {
-		// TODO check exchange not exist already 
+		if (exchangeRepository.exchangeAlreadyExists(exchange.owner.id, exchange.requester.id, exchange.book.id)) {
+			throw new ConflictException("Echange déjà demandé.");
+		}
 		if (exchange.requester.id == exchange.book.user.id) {
 			throw new BadRequestException("Vous ne pouvez pas échanger un livre avec vous-même.");
 		}
