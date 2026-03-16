@@ -57,12 +57,12 @@ public class ExchangeResource {
     @PATCH
     @Path("/{id}/accept")
     public ExchangeResponse acceptExchange(@PathParam("id") Long id) {
-        return ExchangeResponse.fromExchange(exchangeService.acceptExchange(id, jwt.getUserId()));
+        return exchangeService.acceptExchange(id, jwt.getUserId());
     }
 
     @PATCH
     @Path("/{id}/refuse")
     public ExchangeResponse refuseExchange(@PathParam("id") Long id) {
-        return ExchangeResponse.fromExchange(exchangeService.refuseExchange(id, jwt.getUserId()));
+        return exchangeService.refuseExchange(id, jwt.getUserId());
     }
 }
