@@ -8,6 +8,8 @@ import fr.bookswap.common.entity.User;
 
 public class UserDto {
 
+	public Long id;
+
     public String username;
 
     public Set<String> roles;  // Ex: "USER" ou "USER,ADMIN"
@@ -22,6 +24,7 @@ public class UserDto {
 
     public static UserDto fromUser(User user) {
 		UserDto dto = new UserDto();
+		dto.id = user.id;
         dto.username = user.username;
         dto.roles = user.roles;
         dto.email = user.email;

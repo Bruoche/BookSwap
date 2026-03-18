@@ -19,6 +19,14 @@ public class AdminService {
 		return userRepository.listAll();
 	}
 
+	public User getUserById(Long id) {
+		User user = userRepository.findById(id);
+		if (user == null) {
+			throw new NotFoundException(id);
+		}
+		return user;
+	}
+
 	@Transactional
 	public UserDto suspendUser(Long id) {
 		User user = getUserById(id);
@@ -27,11 +35,9 @@ public class AdminService {
 		return UserDto.fromUser(user);
 	}
 
-	public User getUserById(Long id) {
-		User user = userRepository.findById(id);
-		if (user == null) {
-			throw new NotFoundException(id);
-		}
-		return user;
+	@Transactional
+	public void deleteUser(Long id) {
+		User user = getUserById(id);
+		userRepository.delete(user);
 	}
 }
