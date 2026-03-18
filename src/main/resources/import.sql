@@ -14,9 +14,11 @@ INSERT INTO genre (id, name) VALUES (4, 'Policier');
 
 -- Users
 INSERT INTO users (id, username, email, password, active, createdat, roles) 
-VALUES (1, 'otman', 'otman@example.com', '$2a$10$/MrdN02lbKlHVAAlwfuj5eESOgTiJXhOfIarXmn2.oqwTdPXoM/SC', true, NOW(), '{"USER"}');
+VALUES (1, 'otman', 'otman@bookswap.fr', '$2a$10$/MrdN02lbKlHVAAlwfuj5eESOgTiJXhOfIarXmn2.oqwTdPXoM/SC', true, NOW(), '{"USER"}');
 INSERT INTO users (id, username, email, password, active, createdat, roles) 
-VALUES (2, 'aminata', 'aminata@example.com', '$2a$10$/MrdN02lbKlHVAAlwfuj5eESOgTiJXhOfIarXmn2.oqwTdPXoM/SC', true, NOW(), '{"USER"}');
+VALUES (2, 'aminata', 'aminata@bookswap.fr', '$2a$10$/MrdN02lbKlHVAAlwfuj5eESOgTiJXhOfIarXmn2.oqwTdPXoM/SC', true, NOW(), '{"USER"}');
+INSERT INTO users (id, username, email, password, active, createdat, roles) 
+VALUES (3, 'admin', 'admin@bookswap.fr', '$2a$10$b.zG09pgcRUM.AwDVglLCutzNydNsZ7noEIQQdzy.16EwE68xBame', true, NOW(), '{"USER", "ADMIN"}');
 
 -- Books
 INSERT INTO book (id, isbn, title, description, publicationyear, createdby_id, createdat)
