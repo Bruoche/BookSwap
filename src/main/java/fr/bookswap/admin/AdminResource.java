@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 import fr.bookswap.admin.dto.UserDto;
+import fr.bookswap.common.security.JwtService;
 
 @Path("/api/admin")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RolesAllowed({"ADMIN"})  // Tous les endpoints nécessitent USER ou ADMIN
 public class AdminResource {
+
+	@Inject
+	JwtService jwt;
 
 	@Inject
 	AdminService adminService;
@@ -38,15 +42,9 @@ public class AdminResource {
 
     @DELETE
     @Path("/users/{id}")
-    public Response removeUser() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
+    public Response removeUser(@PathParam("id") Long id) {
+		adminService.deleteUser(id);
+        return Response.accepted().build();
     }
 
     @DELETE

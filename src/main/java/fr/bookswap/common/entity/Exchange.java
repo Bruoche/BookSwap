@@ -4,9 +4,10 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,8 +15,8 @@ import java.time.LocalDateTime;
 public class Exchange extends PanacheEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotBlank(message = "Le demandeur est obligatoire")
-    @JoinColumn(nullable = false)
+	@OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(nullable = true)
     public User requester;
 
     @Size(max = 500, message = "La description ne doit pas dépasser 500 caractères")
@@ -43,7 +44,7 @@ public class Exchange extends PanacheEntity {
     // Constructeur par défaut requis par JPA
     public Exchange() {}
 
-    public Exchange(User requester, String description, Type type) {
+    public Exchange(@NotNull(message = "Le demandeur est obligatoire") User requester, String description, Type type) {
         this.requester = requester;
         this.description = description;
         this.type = type;
