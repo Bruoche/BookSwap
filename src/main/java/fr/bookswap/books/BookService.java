@@ -46,13 +46,36 @@ public class BookService {
         return new BookDetailsResponse(book, averageRating);
     }
 
-    @Transactional
-    public List<Book> getAllBooks(String author, String genre, int startDate) {
-        String query = "(?1 is null or author = ?1) " +
-                "and (?2 is null or genre = ?2) " +
-                "and (?3 is null or publicationYear >= ?3)";
-
-        return bookRepository.find(query, author, genre, startDate).list();
+    public List<Book> getAllBooks(String authors, String genres, int year) {
+        return bookRepository.searchByYear(year)
+			.stream() // On filtre après requête car logique trop complexe pour requête sql maintenable
+			.filter(book -> {
+				if (authors == null) {
+					return true;
+				}
+				for (String searchedAuthor : authors.split(" ")) {
+					for (Author bookAuthor : book.authors) {
+						if (bookAuthor.firstname.toLowerCase().contains(searchedAuthor.toLowerCase()) || bookAuthor.lastname.contains(searchedAuthor.toLowerCase())) {
+							return true;
+						}
+					}
+					return false; // Tout les mot-clefs doivent être satisfaits.
+				}
+				return false;
+			}).filter(book -> {
+				if (genres == null) {
+					return true;
+				}
+				for (String searchedGenre : genres.split(" ")) {
+					for (Genre genre : book.genres) {
+						if (genre.name.toLowerCase().contains(searchedGenre.toLowerCase())) {
+							return true;
+						}
+					}
+					return false; // Tout les mot-clefs doivent être satisfaits.
+				}
+				return false;
+			}).toList();
     }
 
     @Transactional
