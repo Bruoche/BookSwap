@@ -1,10 +1,14 @@
 package fr.bookswap.exchange;
 
 import fr.bookswap.common.entity.Exchange;
+import fr.bookswap.common.entity.UserBook;
 import fr.bookswap.common.exception.NotFoundException;
+import fr.bookswap.exchange.dto.ExchangeResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import fr.bookswap.common.exception.BadRequestException;
+import fr.bookswap.common.exception.ConflictException;
 
 import java.util.List;
 
@@ -14,42 +18,55 @@ public class ExchangeService {
     @Inject
     ExchangeRepository exchangeRepository;
 
-    public List<Exchange> getAllExchanges() {
-        return exchangeRepository.listAll(); // TODO : faire selon l'utilisateur (reçues ou envoyées)
+    public List<Exchange> getUserExchanges(Long userId) {
+        return exchangeRepository.listAllForUser(userId);
     }
 
-    public Exchange getExchangeById(Long id) {
-        return exchangeRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException(id));
+    public List<Exchange> searchUserExchanges(String keyword, Long userId) {
+        return exchangeRepository.searchByStatusForUser(Exchange.Status.valueOf(keyword), userId);
+    }
+
+    public Exchange getUserExchangeById(Long id, Long userId) {
+        Exchange exchange = exchangeRepository.findByIdOptional(id)
+			.orElseThrow(() -> new NotFoundException(id));
+		if (exchange.owner.id != userId) {
+			throw new NotFoundException(id);
+		}
+		return exchange;
     }
 
     @Transactional  // Les modifications en BD doivent être dans une transaction
     public Exchange createExchange(Exchange exchange) {
+		if (exchangeRepository.exchangeAlreadyExists(exchange.owner.id, exchange.requester.id, exchange.book.id)) {
+			throw new ConflictException("Echange déjà demandé.");
+		}
+		if (exchange.requester.id == exchange.book.user.id) {
+			throw new BadRequestException("Vous ne pouvez pas échanger un livre avec vous-même.");
+		}
+		if (exchange.book.status != UserBook.Status.OWNED) {
+			throw new BadRequestException("Le livre proposé en échange doit avoir le status \"OWNED\" dans la bibliothèque de l'échangeur.");
+		}
         exchangeRepository.persist(exchange);
         return exchange;
     }
 
     @Transactional
-    public Exchange acceptExchange(Long id) {
-        Exchange exchange = getExchangeById(id);
+    public ExchangeResponse acceptExchange(Long id, Long userId) {
+        Exchange exchange = getUserExchangeById(id, userId);
         exchange.status = Exchange.Status.ACCEPTED;
-        return exchange;
+        return ExchangeResponse.fromExchange(exchange);
     }
 
     @Transactional
-    public Exchange refuseExchange(Long id) {
-        Exchange exchange = getExchangeById(id);
+    public ExchangeResponse refuseExchange(Long id, Long userId) {
+        Exchange exchange = getUserExchangeById(id, userId);
         exchange.status = Exchange.Status.REFUSED;
-        return exchange;
+        return ExchangeResponse.fromExchange(exchange);
     }
 
     @Transactional
-    public void deleteExchange(Long id) {
-        Exchange exchange = getExchangeById(id);
+    public void deleteExchange(Long id, Long userId) {
+        Exchange exchange = getUserExchangeById(id, userId);
         exchangeRepository.delete(exchange);
-    }
-
-    public List<Exchange> searchExchanges(String keyword) {
-        return exchangeRepository.searchByStatus(Exchange.Status.valueOf(keyword));
     }
 }

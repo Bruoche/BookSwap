@@ -13,7 +13,6 @@ INSERT INTO genre (id, name) VALUES (3, 'Science-Fiction');
 INSERT INTO genre (id, name) VALUES (4, 'Policier');
 
 -- Users
--- Note: les rôles sont insérés comme un tableau PostgreSQL (array)
 INSERT INTO users (id, username, email, password, active, createdat, roles) 
 VALUES (1, 'otman', 'otman@example.com', '$2a$10$/MrdN02lbKlHVAAlwfuj5eESOgTiJXhOfIarXmn2.oqwTdPXoM/SC', true, NOW(), '{"USER"}');
 INSERT INTO users (id, username, email, password, active, createdat, roles) 
@@ -40,7 +39,6 @@ INSERT INTO book_author (book_id, authors_id) VALUES (1, 1), (2, 2), (3, 3), (4,
 INSERT INTO book_genre (book_id, genres_id) VALUES (1, 1), (2, 1), (3, 2), (4, 3), (5, 3), (6, 4);
 
 -- User_Book (Bibliothèques)
--- Otman : Les Misérables (1), 1984 (4), Dune (5)
 INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforexchange, isavailableforloan, addedat)
 VALUES (1, 1, 1, 'OWNED', 'GOOD', false, false, NOW());
 INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforexchange, isavailableforloan, addedat)
@@ -57,9 +55,8 @@ INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforex
 VALUES (6, 2, 5, 'WISHLIST', 'NEW', false, false, NOW());
 
 -- Exchange
--- Description remplace le champ 'message' pour correspondre à la colonne 'description' du dump
-INSERT INTO exchange (id, requester_id, description, status, type, created_at, updated_at)
-VALUES (1, 2, 'Échange de Dune sollicité par Aminata', 'PENDING', 'EXCHANGE', NOW(), NOW());
+INSERT INTO exchange (id, requester_id, owner_id, book_id, status, type, requested_at, updated_at)
+VALUES (1, 2, 1, 3, 'PENDING', 'EXCHANGE', NOW(), NOW());
 
 -- Reviews (author_id fait référence à l'utilisateur auteur de la critique dans votre dump)
 INSERT INTO review (id, author_id, book_id, rating, comment, createdat)
