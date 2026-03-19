@@ -3,7 +3,6 @@ package fr.bookswap.books.dto;
 import fr.bookswap.common.entity.Author;
 import fr.bookswap.common.entity.Book;
 import fr.bookswap.common.entity.Genre;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 
 import java.util.Set;

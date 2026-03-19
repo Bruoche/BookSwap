@@ -1,4 +1,4 @@
-package fr.bookswap.review.dto;
+package fr.bookswap.books.dto;
 
 import jakarta.validation.constraints.*;
 

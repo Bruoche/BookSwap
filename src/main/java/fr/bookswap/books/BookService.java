@@ -1,16 +1,17 @@
 package fr.bookswap.books;
 
 import fr.bookswap.books.dto.BookDetailsResponse;
+import fr.bookswap.books.dto.CreateReviewDto;
 import fr.bookswap.books.dto.UpdateBookRequest;
 import fr.bookswap.common.entity.Author;
 import fr.bookswap.common.entity.Book;
+import fr.bookswap.common.entity.Genre;
 import fr.bookswap.common.entity.Review;
 import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
-import fr.bookswap.common.security.JwtService;
-import fr.bookswap.review.ReviewRepository;
-import fr.bookswap.review.dto.CreateReviewDto;
-import fr.bookswap.user.UserRepository;
+import fr.bookswap.common.repository.BookRepository;
+import fr.bookswap.common.repository.ReviewRepository;
+import fr.bookswap.common.repository.UserRepository;
 import io.quarkus.security.ForbiddenException;
 import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -18,7 +19,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,13 +46,36 @@ public class BookService {
         return new BookDetailsResponse(book, averageRating);
     }
 
-    @Transactional
-    public List<Book> getAllBooks(String author, String genre, int startDate) {
-        String query = "(?1 is null or author = ?1) " +
-                "and (?2 is null or genre = ?2) " +
-                "and (?3 is null or publicationYear >= ?3)";
-
-        return bookRepository.find(query, author, genre, startDate).list();
+    public List<Book> getAllBooks(String authors, String genres, int year) {
+        return bookRepository.searchByYear(year)
+			.stream() // On filtre après requête car logique trop complexe pour requête sql maintenable
+			.filter(book -> {
+				if (authors == null) {
+					return true;
+				}
+				for (String searchedAuthor : authors.split(" ")) {
+					for (Author bookAuthor : book.authors) {
+						if (bookAuthor.firstname.contains(searchedAuthor) || bookAuthor.lastname.contains(searchedAuthor)) {
+							return true;
+						}
+					}
+					return false; // Tout les mot-clefs doivent être satisfaits.
+				}
+				return false;
+			}).filter(book -> {
+				if (genres == null) {
+					return true;
+				}
+				for (String searchedGenre : genres.split(" ")) {
+					for (Genre genre : book.genres) {
+						if (genre.name.contains(searchedGenre)) {
+							return true;
+						}
+					}
+					return false; // Tout les mot-clefs doivent être satisfaits.
+				}
+				return false;
+			}).toList();
     }
 
     @Transactional
@@ -91,7 +114,6 @@ public class BookService {
         bookRepository.deleteById(bookId);
     }
 
-    @Transactional
     public List<Author> getBookAuthors(Long id) {
         Book book = bookRepository.findById(id);
         if (book == null) {
@@ -132,7 +154,6 @@ public class BookService {
     @Transactional
     public List<Review>  getReviews(Long bookId) {
         Book book = bookRepository.findById(bookId);
-        // Need to handle error with interceptors ?
         if (book == null) {
             throw new NotFoundException("Book not found with ID: " + bookId);
         }
