@@ -3,6 +3,7 @@ package fr.bookswap.exchange;
 import fr.bookswap.common.entity.Exchange;
 import fr.bookswap.common.entity.UserBook;
 import fr.bookswap.common.exception.NotFoundException;
+import fr.bookswap.common.repository.ExchangeRepository;
 import fr.bookswap.exchange.dto.ExchangeResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

@@ -1,4 +1,4 @@
-package fr.bookswap.exchange;
+package fr.bookswap.common.repository;
 
 import fr.bookswap.common.entity.Exchange;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
