@@ -55,7 +55,7 @@ public class BookService {
 				}
 				for (String searchedAuthor : authors.split(" ")) {
 					for (Author bookAuthor : book.authors) {
-						if (bookAuthor.firstname.contains(searchedAuthor) || bookAuthor.lastname.contains(searchedAuthor)) {
+						if (bookAuthor.firstname.toLowerCase().contains(searchedAuthor.toLowerCase()) || bookAuthor.lastname.contains(searchedAuthor.toLowerCase())) {
 							return true;
 						}
 					}
@@ -68,7 +68,7 @@ public class BookService {
 				}
 				for (String searchedGenre : genres.split(" ")) {
 					for (Genre genre : book.genres) {
-						if (genre.name.contains(searchedGenre)) {
+						if (genre.name.toLowerCase().contains(searchedGenre.toLowerCase())) {
 							return true;
 						}
 					}
