@@ -9,6 +9,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class ExchangeResponse {
+
+	@NotNull
+	public Long id;
 	
     @NotBlank(message = "Le possesseur est obligatoire")
     public String ownerName;
@@ -33,6 +36,7 @@ public class ExchangeResponse {
 
     public static ExchangeResponse fromExchange(Exchange exchange) {
         ExchangeResponse dto = new ExchangeResponse();
+		dto.id = exchange.id;
 		dto.ownerName = exchange.owner.username;
 		dto.book = ExchangedBookDto.fromBook(exchange.book);
 		dto.type = exchange.type;
