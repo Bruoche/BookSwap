@@ -2,7 +2,7 @@ package fr.bookswap.books.dto;
 
 import jakarta.validation.constraints.*;
 
-public class CreateReviewDto {
+public class CreateReviewRequest {
     @NotNull
     @Min(1) @Max(5)
     public int rating;
