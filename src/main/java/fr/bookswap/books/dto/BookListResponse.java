@@ -1,12 +1,16 @@
 package fr.bookswap.books.dto;
 
-import fr.bookswap.common.entity.Book;
-import jakarta.validation.constraints.*;
-
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BookDetailsResponse {
+import fr.bookswap.common.entity.Book;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
+
+public class BookListResponse {
+
+	public Long id;
 
     @Size(min = 10, max = 13, message = "L'ISBN d'un livre doit faire 13 caractères (10 pour les livres d'avant 2007)")
     public String isbn;
@@ -29,14 +33,11 @@ public class BookDetailsResponse {
 
     public Set<String> genres;
 
-    @Min(0)
-    @Max(5)
-    public Double rating;
+    public BookListResponse() {}
 
-    public BookDetailsResponse() {}
-
-    public static BookDetailsResponse fromBook(Book book, double averageRating) {
-        BookDetailsResponse dto = new BookDetailsResponse();
+    public static BookListResponse fromBook(Book book) {
+        BookListResponse dto = new BookListResponse();
+		dto.id = book.id;
 		dto.isbn = book.isbn;
         dto.title = book.title;
         dto.description = book.description;
@@ -51,7 +52,7 @@ public class BookDetailsResponse {
 			.stream()
 			.map(genre -> genre.name)
 			.collect(Collectors.toSet());
-		dto.rating = averageRating;
 		return dto;
     }
+	
 }

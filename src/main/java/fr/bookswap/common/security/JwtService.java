@@ -43,4 +43,8 @@ public class JwtService {
             throw new UnauthorizedException("Token 'sub' claim is not a valid ID: " + sub);
         }
     }
+
+	public boolean isAdmin() {
+		return jwt.containsClaim("ADMIN");
+	}
 }

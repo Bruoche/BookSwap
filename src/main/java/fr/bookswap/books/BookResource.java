@@ -1,9 +1,9 @@
 package fr.bookswap.books;
 
 import fr.bookswap.books.dto.BookDetailsResponse;
-import fr.bookswap.books.dto.CreateReviewDto;
-import fr.bookswap.books.dto.UpdateBookRequest;
-import fr.bookswap.common.entity.Book;
+import fr.bookswap.books.dto.BookListResponse;
+import fr.bookswap.books.dto.CreateBookRequest;
+import fr.bookswap.books.dto.CreateReviewRequest;
 import fr.bookswap.common.entity.Review;
 import fr.bookswap.common.security.JwtService;
 import jakarta.annotation.security.PermitAll;
@@ -29,12 +29,15 @@ public class BookResource {
 
     @GET
 	@PermitAll
-    public List<Book> getAll(
+    public List<BookListResponse> getAll(
             @QueryParam("author") String author,
             @QueryParam("genre") String genre,
             @QueryParam("publicationYear") int publicationYear
     ) {
-        return bookService.getAllBooks(author, genre, publicationYear);
+        return bookService.getAllBooks(author, genre, publicationYear)
+			.stream()
+			.map(book -> BookListResponse.fromBook(book))
+			.toList();
     }
 
     @GET
@@ -45,31 +48,33 @@ public class BookResource {
     }
 
     @POST
-    public Book add(UpdateBookRequest  updateBookRequest) {
-        return bookService.createBook(jwtService.getUserId(), updateBookRequest);
+    public BookListResponse add(CreateBookRequest  request) {
+        return BookListResponse.fromBook(bookService.createBook(jwtService.getUserId(), request));
     }
 
     @PUT
     @Path("/{id}")
-    public Book edit(UpdateBookRequest updateBookRequest, @PathParam("id") Long bookId) {
-        return bookService.updateBookById(bookId, jwtService.getUserId(), updateBookRequest);
+    public BookListResponse edit(CreateBookRequest request, @PathParam("id") Long bookId) {
+        return bookService.updateBook(bookId, jwtService.getUserId(), request, jwtService.isAdmin());
     }
 
-    @RolesAllowed({"ADMIN"})
     @DELETE
     @Path("/{id}")
+    @RolesAllowed({"ADMIN"})
     public Response remove(@PathParam("id") Long bookId) {
         bookService.deleteBook(bookId);
         return Response.ok().build();
     }
 
+	@POST
     @Path("/{id}/reviews")
-    public Review addReview(CreateReviewDto reviewDto, @PathParam("id") Long bookId) {
-        return bookService.addReview(bookId, jwtService.getUserId(), reviewDto);
+    public Review addReview(CreateReviewRequest request, @PathParam("id") Long bookId) {
+        return bookService.addReview(bookId, jwtService.getUserId(), request);
     }
 
     @GET
     @Path("/{id}/reviews")
+	@PermitAll
     public List<Review> getReviews(@PathParam("id") Long bookId) {
         return bookService.getReviews(bookId);
     }

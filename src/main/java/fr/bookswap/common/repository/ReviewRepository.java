@@ -12,7 +12,7 @@ public class ReviewRepository implements PanacheRepository<Review> {
 
     @Transactional
     public List<Review> findByBookId(Long bookId) {
-        return list("book_id", bookId);
+        return list("book.id", bookId);
     }
 
     public Double getAverageRating(Long bookId) {

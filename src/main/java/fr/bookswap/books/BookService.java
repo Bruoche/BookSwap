@@ -1,8 +1,9 @@
 package fr.bookswap.books;
 
 import fr.bookswap.books.dto.BookDetailsResponse;
-import fr.bookswap.books.dto.CreateReviewDto;
-import fr.bookswap.books.dto.UpdateBookRequest;
+import fr.bookswap.books.dto.BookListResponse;
+import fr.bookswap.books.dto.CreateBookRequest;
+import fr.bookswap.books.dto.CreateReviewRequest;
 import fr.bookswap.common.entity.Author;
 import fr.bookswap.common.entity.Book;
 import fr.bookswap.common.entity.Genre;
@@ -12,18 +13,15 @@ import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.repository.BookRepository;
 import fr.bookswap.common.repository.ReviewRepository;
 import fr.bookswap.common.repository.UserRepository;
-import io.quarkus.security.ForbiddenException;
+import fr.bookswap.common.exception.BadRequestException;
 import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.BadRequestException;
 
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
-
-import static io.quarkus.hibernate.orm.panache.PanacheEntityBase.find;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class BookService {
@@ -37,13 +35,19 @@ public class BookService {
     @Inject
     UserRepository userRepository;
 
+	@Inject
+	BookAuthorService authorService;
+
+	@Inject
+	BookGenreService genreService;
+
     public BookDetailsResponse getBookById(Long bookId) {
         Book book = bookRepository.findById(bookId);
         if (book == null) {
             throw new NotFoundException("This book doesn't exist");
         }
         Double averageRating = reviewRepository.getAverageRating(bookId);
-        return new BookDetailsResponse(book, averageRating);
+        return BookDetailsResponse.fromBook(book, averageRating);
     }
 
     public List<Book> getAllBooks(String authors, String genres, int year) {
@@ -79,34 +83,47 @@ public class BookService {
     }
 
     @Transactional
-    public Book createBook(Long userId, UpdateBookRequest bookDto) {
-        Book newBook = bookDto.toBook();
+    public Book createBook(Long userId, CreateBookRequest bookDto) {
         User user = User.findById(userId);
         if (user == null) {
             throw new NotFoundException("User not found");
         }
-        newBook.createdBy = user;
-        newBook.createdAt = OffsetDateTime.now();
+		Set<Author> authors = bookDto.authors
+			.stream()
+			.map(authorId -> authorService.getAuthorById(authorId))
+			.collect(Collectors.toSet());
+		Set<Genre> genres = bookDto.genres
+			.stream()
+			.map(genreId -> genreService.getGenreById(genreId))
+			.collect(Collectors.toSet());
+        Book newBook = bookDto.toBook(user, authors, genres);
         bookRepository.persist(newBook);
         return newBook;
     }
 
     @Transactional
-    public Book updateBookById(Long bookId, Long userId, UpdateBookRequest bookUpdate) {
-
-        Book targetedBook = find("id = ?1 and ownerId = ?2", bookId, userId).firstResult();
-        if  (targetedBook == null) {
-            throw new ForbiddenException("Book not found or you are not the owner.");
+    public BookListResponse updateBook(Long bookId, Long userId, CreateBookRequest request, boolean isAdmin) {
+        Book book = bookRepository.findById(bookId);
+        if  (book == null) {
+            throw new NotFoundException(bookId);
         }
-        targetedBook.authors = bookUpdate.authors;
-        targetedBook.title = bookUpdate.title;
-        targetedBook.description = bookUpdate.description;
-        targetedBook.coverUrl = bookUpdate.coverUrl;
-        targetedBook.isbn = bookUpdate.isbn;
-        targetedBook.publicationYear = bookUpdate.publicationYear;
-        targetedBook.genres = bookUpdate.genres;
-
-        return targetedBook;
+		if (book.createdBy.id != userId && !isAdmin) {
+			throw new BadRequestException("Vous ne pouvez pas modifier le livre de quelqu'un d'autre.");
+		}
+		book.isbn = request.isbn;
+        book.title = request.title;
+        book.description = request.description;
+        book.publicationYear = request.publicationYear;
+        book.coverUrl = request.coverUrl;
+        book.authors = request.authors
+			.stream()
+			.map(authorId -> authorService.getAuthorById(authorId))
+			.collect(Collectors.toSet());
+        book.genres = request.genres
+			.stream()
+			.map(genreId -> genreService.getGenreById(genreId))
+			.collect(Collectors.toSet());
+        return BookListResponse.fromBook(book);
     }
 
     @Transactional
@@ -114,26 +131,16 @@ public class BookService {
         bookRepository.deleteById(bookId);
     }
 
-    public List<Author> getBookAuthors(Long id) {
-        Book book = bookRepository.findById(id);
-        if (book == null) {
-            throw new ForbiddenException("Unkown book id: " + id);
-        }
-        return new ArrayList<>(book.authors);
-    }
-
     @Transactional
-    public Review addReview(Long bookId, Long currentUserId, CreateReviewDto dto) {
+    public Review addReview(Long bookId, Long currentUserId, CreateReviewRequest request) {
         User currentUser = userRepository.findById(currentUserId);
         if (currentUser == null) {
             throw new UnauthorizedException("Authenticated user not found in database.");
         }
-
         Book book = bookRepository.findById(bookId);
         if (book == null) {
             throw new NotFoundException("Book not found with ID: " + bookId);
         }
-
         long existing = reviewRepository.count("author = ?1 and book = ?2", currentUser, book);
         if (existing > 0) {
             throw new BadRequestException("You have already reviewed this book.");
@@ -142,8 +149,8 @@ public class BookService {
         Review review = new Review(
                 currentUser,
                 book,
-                dto.rating,
-                dto.comment
+                request.rating,
+                request.comment
         );
 
         reviewRepository.persist(review);
@@ -151,7 +158,6 @@ public class BookService {
         return review;
     }
 
-    @Transactional
     public List<Review>  getReviews(Long bookId) {
         Book book = bookRepository.findById(bookId);
         if (book == null) {
