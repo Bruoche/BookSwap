@@ -4,6 +4,7 @@ import fr.bookswap.books.dto.BookDetailsResponse;
 import fr.bookswap.books.dto.BookListResponse;
 import fr.bookswap.books.dto.CreateBookRequest;
 import fr.bookswap.books.dto.CreateReviewRequest;
+import fr.bookswap.books.dto.ReviewResponse;
 import fr.bookswap.common.entity.Author;
 import fr.bookswap.common.entity.Book;
 import fr.bookswap.common.entity.Review;
@@ -13,6 +14,7 @@ import fr.bookswap.common.repository.BookRepository;
 import fr.bookswap.common.repository.ReviewRepository;
 import fr.bookswap.common.repository.UserRepository;
 import fr.bookswap.common.exception.BadRequestException;
+import fr.bookswap.common.exception.ConflictException;
 import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -131,30 +133,21 @@ public class BookService {
     }
 
     @Transactional
-    public Review addReview(Long bookId, Long currentUserId, CreateReviewRequest request) {
+    public ReviewResponse addReview(Long bookId, Long currentUserId, CreateReviewRequest request) {
         User currentUser = userRepository.findById(currentUserId);
         if (currentUser == null) {
-            throw new UnauthorizedException("Authenticated user not found in database.");
+            throw new UnauthorizedException("User doesn't exist.");
         }
         Book book = bookRepository.findById(bookId);
         if (book == null) {
             throw new NotFoundException("Book not found with ID: " + bookId);
         }
-        long existing = reviewRepository.count("author = ?1 and book = ?2", currentUser, book);
-        if (existing > 0) {
-            throw new BadRequestException("You have already reviewed this book.");
+		if (reviewRepository.countReviewsOf(currentUserId, bookId) > 0) {
+            throw new ConflictException("You have already reviewed this book.");
         }
-
-        Review review = new Review(
-                currentUser,
-                book,
-                request.rating,
-                request.comment
-        );
-
-        reviewRepository.persist(review);
-
-        return review;
+        Review review = request.toReview(currentUser, book);
+		reviewRepository.persist(review);
+        return ReviewResponse.fromReview(review);
     }
 
     public List<Review>  getReviews(Long bookId) {
