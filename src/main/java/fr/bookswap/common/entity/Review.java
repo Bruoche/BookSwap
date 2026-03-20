@@ -11,12 +11,12 @@ import java.time.OffsetDateTime;
 @Table(name = "review")
 public class Review extends PanacheEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotBlank(message = "L'utilisateur lié est obligatoire")
+    @NotNull(message = "L'utilisateur lié est obligatoire")
     @JoinColumn(nullable = false)
     public User author;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotBlank(message = "Le livre lié est obligatoire")
+    @NotNull(message = "Le livre lié est obligatoire")
     @JoinColumn(nullable = false)
     public Book book;
 

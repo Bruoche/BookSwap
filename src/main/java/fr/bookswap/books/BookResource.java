@@ -4,7 +4,7 @@ import fr.bookswap.books.dto.BookDetailsResponse;
 import fr.bookswap.books.dto.BookListResponse;
 import fr.bookswap.books.dto.CreateBookRequest;
 import fr.bookswap.books.dto.CreateReviewRequest;
-import fr.bookswap.common.entity.Review;
+import fr.bookswap.books.dto.ReviewResponse;
 import fr.bookswap.common.security.JwtService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -68,14 +68,17 @@ public class BookResource {
 
 	@POST
     @Path("/{id}/reviews")
-    public Review addReview(CreateReviewRequest request, @PathParam("id") Long bookId) {
+    public ReviewResponse addReview(CreateReviewRequest request, @PathParam("id") Long bookId) {
         return bookService.addReview(bookId, jwtService.getUserId(), request);
     }
 
     @GET
     @Path("/{id}/reviews")
 	@PermitAll
-    public List<Review> getReviews(@PathParam("id") Long bookId) {
-        return bookService.getReviews(bookId);
+    public List<ReviewResponse> getReviews(@PathParam("id") Long bookId) {
+        return bookService.getReviews(bookId)
+			.stream()
+			.map(review -> ReviewResponse.fromReview(review))
+			.toList();
     }
 }
