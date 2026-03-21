@@ -22,7 +22,7 @@ public class LibraryService {
 	LibraryRepository libraryRepostory;
 
 	public List<UserBook> findByStatus(UserBook.Status status, Long userId) {
-		return libraryRepostory.findByStatus(status, userId);
+		return libraryRepostory.listByStatus(status, userId);
 	}
 
 	public UserBook getBookById(Long id, Long userId) {
@@ -31,6 +31,10 @@ public class LibraryService {
 			throw new NotFoundException(id);
 		}
 		return book;
+	}
+
+	public List<UserBook> getUserLibrary(String username) {
+		return libraryRepostory.listForUser(username);
 	}
 
 	@Transactional
