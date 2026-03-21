@@ -15,7 +15,6 @@ import fr.bookswap.common.repository.ReviewRepository;
 import fr.bookswap.common.repository.UserRepository;
 import fr.bookswap.common.exception.BadRequestException;
 import fr.bookswap.common.exception.ConflictException;
-import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -139,16 +138,16 @@ public class BookService {
     }
 
     @Transactional
-    public ReviewResponse addReview(Long bookId, Long currentUserId, CreateReviewRequest request) {
-        User currentUser = userRepository.findById(currentUserId);
+    public ReviewResponse addReview(Long bookId, Long userId, CreateReviewRequest request) {
+        User currentUser = userRepository.findById(userId);
         if (currentUser == null) {
-            throw new UnauthorizedException("User doesn't exist.");
+            throw new NotFoundException("User doesn't exist.");
         }
         Book book = bookRepository.findById(bookId);
         if (book == null) {
             throw new NotFoundException("Book not found with ID: " + bookId);
         }
-		if (reviewRepository.countReviewsOf(currentUserId, bookId) > 0) {
+		if (reviewRepository.countReviewsOf(userId, bookId) > 0) {
             throw new ConflictException("You have already reviewed this book.");
         }
         Review review = request.toReview(currentUser, book);
