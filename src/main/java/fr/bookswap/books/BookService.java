@@ -1,4 +1,166 @@
 package fr.bookswap.books;
 
+import fr.bookswap.books.dto.BookDetailsResponse;
+import fr.bookswap.books.dto.BookListResponse;
+import fr.bookswap.books.dto.CreateBookRequest;
+import fr.bookswap.books.dto.CreateReviewRequest;
+import fr.bookswap.books.dto.ReviewResponse;
+import fr.bookswap.common.entity.Author;
+import fr.bookswap.common.entity.Book;
+import fr.bookswap.common.entity.Genre;
+import fr.bookswap.common.entity.Review;
+import fr.bookswap.common.entity.User;
+import fr.bookswap.common.exception.NotFoundException;
+import fr.bookswap.common.repository.BookRepository;
+import fr.bookswap.common.repository.ReviewRepository;
+import fr.bookswap.common.repository.UserRepository;
+import fr.bookswap.common.exception.BadRequestException;
+import fr.bookswap.common.exception.ConflictException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@ApplicationScoped
 public class BookService {
+
+    @Inject
+    BookRepository bookRepository;
+
+    @Inject
+    ReviewRepository reviewRepository;
+
+    @Inject
+    UserRepository userRepository;
+
+	@Inject
+	BookAuthorService authorService;
+
+	@Inject
+	BookGenreService genreService;
+
+    public BookDetailsResponse getBookById(Long bookId) {
+        Book book = bookRepository.findById(bookId);
+        if (book == null) {
+            throw new NotFoundException("This book doesn't exist");
+        }
+        Double averageRating = reviewRepository.getAverageRating(bookId);
+        return BookDetailsResponse.fromBook(book, averageRating);
+    }
+
+    public List<Book> getAllBooks(String isbn, String authors, String genres, int year) {
+		List<Book> unfiltered;
+		if (isbn == null) {
+			unfiltered = bookRepository.searchByYear(year);
+		} else {
+			unfiltered = bookRepository.searchByIsbnAndYear(isbn, year);
+		}
+        return unfiltered
+			.stream() // On filtre après requête car logique trop complexe pour requête sql maintenable
+			.filter(book -> {
+				if (authors == null) {
+					return true;
+				}
+				for (String searchedAuthor : authors.split(" ")) {
+					for (Author bookAuthor : book.authors) {
+						if (bookAuthor.firstname.toLowerCase().contains(searchedAuthor.toLowerCase()) || bookAuthor.lastname.toLowerCase().contains(searchedAuthor.toLowerCase())) {
+							return true;
+						}
+					}
+					return false; // Tout les mot-clefs doivent être satisfaits.
+				}
+				return false;
+			}).filter(book -> {
+				if (genres == null) {
+					return true;
+				}
+				for (String searchedGenre : genres.split(" ")) {
+					for (Genre genre : book.genres) {
+						if (genre.name.toLowerCase().contains(searchedGenre.toLowerCase())) {
+							return true;
+						}
+					}
+					return false; // Tout les mot-clefs doivent être satisfaits.
+				}
+				return false;
+			}).toList();
+    }
+
+    @Transactional
+    public Book createBook(Long userId, CreateBookRequest bookDto) {
+        User user = User.findById(userId);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
+		Set<Author> authors = bookDto.authors
+			.stream()
+			.map(authorId -> authorService.getAuthorById(authorId))
+			.collect(Collectors.toSet());
+		Set<Genre> genres = bookDto.genres
+			.stream()
+			.map(genreId -> genreService.getGenreById(genreId))
+			.collect(Collectors.toSet());
+        Book newBook = bookDto.toBook(user, authors, genres);
+        bookRepository.persist(newBook);
+        return newBook;
+    }
+
+    @Transactional
+    public BookListResponse updateBook(Long bookId, Long userId, CreateBookRequest request, boolean isAdmin) {
+        Book book = bookRepository.findById(bookId);
+        if  (book == null) {
+            throw new NotFoundException(bookId);
+        }
+		if (book.createdBy.id != userId && !isAdmin) {
+			throw new BadRequestException("Vous ne pouvez pas modifier le livre de quelqu'un d'autre.");
+		}
+		book.isbn = request.isbn;
+        book.title = request.title;
+        book.description = request.description;
+        book.publicationYear = request.publicationYear;
+        book.coverUrl = request.coverUrl;
+        book.authors = request.authors
+			.stream()
+			.map(authorId -> authorService.getAuthorById(authorId))
+			.collect(Collectors.toSet());
+        book.genres = request.genres
+			.stream()
+			.map(genreId -> genreService.getGenreById(genreId))
+			.collect(Collectors.toSet());
+        return BookListResponse.fromBook(book);
+    }
+
+    @Transactional
+    public void deleteBook(Long bookId) {
+        bookRepository.deleteById(bookId);
+    }
+
+    @Transactional
+    public ReviewResponse addReview(Long bookId, Long userId, CreateReviewRequest request) {
+        User currentUser = userRepository.findById(userId);
+        if (currentUser == null) {
+            throw new NotFoundException("User doesn't exist.");
+        }
+        Book book = bookRepository.findById(bookId);
+        if (book == null) {
+            throw new NotFoundException("Book not found with ID: " + bookId);
+        }
+		if (reviewRepository.countReviewsOf(userId, bookId) > 0) {
+            throw new ConflictException("You have already reviewed this book.");
+        }
+        Review review = request.toReview(currentUser, book);
+		reviewRepository.persist(review);
+        return ReviewResponse.fromReview(review);
+    }
+
+    public List<Review>  getReviews(Long bookId) {
+        Book book = bookRepository.findById(bookId);
+        if (book == null) {
+            throw new NotFoundException("Book not found with ID: " + bookId);
+        }
+        return reviewRepository.findByBookId(bookId);
+    }
 }
