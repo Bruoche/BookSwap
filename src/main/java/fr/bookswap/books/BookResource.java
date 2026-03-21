@@ -30,11 +30,12 @@ public class BookResource {
     @GET
 	@PermitAll
     public List<BookListResponse> getAll(
+			@QueryParam("isbn") String isbn,
             @QueryParam("author") String author,
             @QueryParam("genre") String genre,
             @QueryParam("publicationYear") int publicationYear
     ) {
-        return bookService.getAllBooks(author, genre, publicationYear)
+        return bookService.getAllBooks(isbn, author, genre, publicationYear)
 			.stream()
 			.map(book -> BookListResponse.fromBook(book))
 			.toList();
