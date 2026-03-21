@@ -48,6 +48,14 @@ INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforex
 INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforexchange, isavailableforloan, addedat) VALUES (5, 2, 6, 'OWNED', 'WORN', false, true, NOW());
 INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforexchange, isavailableforloan, addedat) VALUES (6, 2, 5, 'WISHLIST', 'NEW', false, false, NOW());
 
+-- User 3: dedicated to ExchangeService unit tests (avoids conflicts with pre-seeded data)
+INSERT INTO users (id, username, email, password, active, createdat, roles) VALUES (3, 'charlie', 'charlie@example.com', '$2a$10$/MrdN02lbKlHVAAlwfuj5eESOgTiJXhOfIarXmn2.oqwTdPXoM/SC', true, NOW(), 'USER');
+INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforexchange, isavailableforloan, addedat) VALUES (7, 3, 1, 'OWNED', 'GOOD', true, false, NOW()); -- for searchByPending  (req=1, owner=3, book=7)
+INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforexchange, isavailableforloan, addedat) VALUES (8, 3, 2, 'OWNED', 'GOOD', true, false, NOW()); -- for createExchange_valid (req=1, owner=3, book=8)
+INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforexchange, isavailableforloan, addedat) VALUES (9, 3, 3, 'OWNED', 'GOOD', true, false, NOW()); -- for createExchange_duplicate (req=1, owner=3, book=9)
+INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforexchange, isavailableforloan, addedat) VALUES (10, 3, 4, 'OWNED', 'GOOD', true, false, NOW()); -- for acceptExchange (req=1, owner=3, book=10)
+INSERT INTO user_book (id, user_id, book_id, status, condition, isavailableforexchange, isavailableforloan, addedat) VALUES (11, 3, 5, 'OWNED', 'GOOD', true, false, NOW()); -- for refuseExchange  (req=1, owner=3, book=11)
+
 -- Exchange
 INSERT INTO exchange (id, requester_id, owner_id, book_id, status, type, requested_at, updated_at) VALUES (1, 2, 1, 3, 'PENDING', 'EXCHANGE', NOW(), NOW());
 
@@ -61,5 +69,5 @@ ALTER SEQUENCE book_seq RESTART WITH 100;
 ALTER SEQUENCE exchange_seq RESTART WITH 100;
 ALTER SEQUENCE genre_seq RESTART WITH 100;
 ALTER SEQUENCE review_seq RESTART WITH 100;
-ALTER SEQUENCE user_book_seq RESTART WITH 100;
-ALTER SEQUENCE users_seq RESTART WITH 100;
+ALTER SEQUENCE user_book_seq RESTART WITH 200;
+ALTER SEQUENCE users_seq RESTART WITH 200;
