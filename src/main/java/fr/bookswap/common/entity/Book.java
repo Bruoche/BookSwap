@@ -3,7 +3,10 @@ package fr.bookswap.common.entity;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.OffsetDateTime;
 import java.util.Set;
@@ -37,8 +40,7 @@ public class Book extends PanacheEntity {
     public String coverUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull(message = "Le livre doit être créé par un utilisateur")
-    @JoinColumn(nullable = false)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     public User createdBy;
 
     @CreationTimestamp
@@ -56,8 +58,8 @@ public class Book extends PanacheEntity {
     // Constructeur par défaut requis par JPA
     public Book() {}
 
-    public Book(String isbn, String title, String description, int publicationYear, String coverUrl, User createdBy, Set<Author> authors, Set<Genre> genres) {
-        this.isbn = isbn;
+    public Book(String isbn, String title, String description, int publicationYear, String coverUrl, @NotNull(message = "Le livre doit être créé par un utilisateur") User createdBy, Set<Author> authors, Set<Genre> genres) {
+		this.isbn = isbn;
         this.title = title;
         this.description = description;
         this.publicationYear = publicationYear;
