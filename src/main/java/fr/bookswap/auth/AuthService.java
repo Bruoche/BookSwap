@@ -1,6 +1,8 @@
 package fr.bookswap.auth;
 
+import fr.bookswap.auth.dto.EditUserRequest;
 import fr.bookswap.common.entity.User;
+import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.security.JwtService;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -45,4 +47,22 @@ public class AuthService {
         user.persist();
         return user;
     }
+
+	public User getUser() {
+		Long id = jwtService.getUserId();
+		User user = User.findById(id);
+		if (user == null) {
+			throw new NotFoundException(id);
+		}
+		return user;
+	}
+
+	@Transactional
+	public User editUser(EditUserRequest request) {
+		User user = getUser();
+		user.username = request.username;
+		user.password = BcryptUtil.bcryptHash(request.password);
+		user.email = request.email;
+		return user;
+	}
 }

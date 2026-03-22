@@ -1,10 +1,13 @@
 package fr.bookswap.auth;
 
 import fr.bookswap.common.entity.User;
+import fr.bookswap.auth.dto.EditUserRequest;
 import fr.bookswap.auth.dto.LoginRequest;
 import fr.bookswap.auth.dto.LoginResponse;
 import fr.bookswap.auth.dto.RegisterRequest;
+import fr.bookswap.auth.dto.UserResponse;
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -52,28 +55,16 @@ public class AuthResource {
 
     @GET
     @Path("/me")
-    public Response userProfile() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
+	@RolesAllowed({"USER", "ADMIN"})
+    public UserResponse userProfile() {
+        return UserResponse.fromUser(authService.getUser());
     }
 
     @PUT
     @Path("/me")
-    public Response editProfile() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
+	@RolesAllowed({"USER", "ADMIN"})
+    public UserResponse editProfile(@Valid EditUserRequest request) {
+        return UserResponse.fromUser(authService.editUser(request));
     }
 
     @POST
