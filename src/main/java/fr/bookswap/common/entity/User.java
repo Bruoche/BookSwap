@@ -13,14 +13,14 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@UserDefinition  // Indique à Quarkus que c'est l'entité d'authentification
+@UserDefinition 
 public class User extends PanacheEntity {
 
     @Username
     @Column(unique = true, nullable = false)
     public String username;
 
-    @Password  // Quarkus gère le hash BCrypt automatiquement à la vérification
+    @Password
     @Column(nullable = false)
     public String password;
 
