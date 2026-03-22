@@ -67,6 +67,13 @@ public class AuthResource {
         return UserResponse.fromUser(authService.editUser(request));
     }
 
+	@PATCH
+	@Path("/password")
+	@RolesAllowed({"USER", "ADMIN"})
+	public UserResponse changePassword(@QueryParam("old_password") String oldPassword, @QueryParam("new_password") String newPassword) {
+		return authService.editPassword(oldPassword, newPassword); 
+	}
+
     @POST
     @Path("/refresh")
     public Response refreshToken() { //TODO

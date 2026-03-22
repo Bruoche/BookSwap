@@ -1,6 +1,7 @@
 package fr.bookswap.auth;
 
 import fr.bookswap.auth.dto.EditUserRequest;
+import fr.bookswap.auth.dto.UserResponse;
 import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.security.JwtService;
@@ -8,6 +9,7 @@ import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import fr.bookswap.common.exception.BadRequestException;
 import jakarta.ws.rs.NotAuthorizedException;
 
 import java.util.HashSet;
@@ -25,7 +27,7 @@ public class AuthService {
     public String login(String username, String password) {
         User user = User.findByUsername(username);
 
-        if (user == null || !BcryptUtil.matches(password, user.password)) {
+        if (user == null || !checkPassword(password, user.password)) {
             throw new NotAuthorizedException("Identifiants invalides");
         }
 
@@ -61,8 +63,21 @@ public class AuthService {
 	public User editUser(EditUserRequest request) {
 		User user = getUser();
 		user.username = request.username;
-		user.password = BcryptUtil.bcryptHash(request.password);
 		user.email = request.email;
 		return user;
+	}
+
+	@Transactional
+	public UserResponse editPassword(String oldPassword, String newPassword) {
+		User user = getUser();
+		if (!checkPassword(oldPassword, user.password)) {
+			throw new BadRequestException("L'ancien mot de passe est incorrect.");
+		}
+		user.password = BcryptUtil.bcryptHash(newPassword);
+		return UserResponse.fromUser(user);
+	}
+
+	private boolean checkPassword(String tested, String password) {
+		return BcryptUtil.matches(tested, password);
 	}
 }
