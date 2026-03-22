@@ -48,15 +48,9 @@ public class AdminResource {
     }
 
     @DELETE
-    @Path("/reviews/id")
-    public Response removeReview() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
+    @Path("/reviews/{id}")
+    public Response removeReview(@PathParam("id") Long id) {
+        adminService.deleteReview(id);
+		return Response.accepted().build();
     }
 }
