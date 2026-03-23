@@ -21,8 +21,8 @@ public class AuthorResource {
 	AuthorService authorService;
 
     @GET
-    public List<Author> getAll() {
-        return authorService.getAll();
+    public List<Author> getAll(@QueryParam("index") int index, @QueryParam("pageSize") int pageSize) {
+        return authorService.getAll(index, pageSize);
     }
 
     @GET

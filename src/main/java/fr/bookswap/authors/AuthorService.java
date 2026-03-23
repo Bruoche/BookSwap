@@ -5,6 +5,7 @@ import java.util.List;
 import fr.bookswap.common.entity.Author;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.repository.AuthorRepository;
+import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -15,8 +16,8 @@ public class AuthorService {
 	@Inject
 	AuthorRepository authorRepository;
 
-	public List<Author> getAll() {
-		return authorRepository.listAll(); 
+	public List<Author> getAll(int index, int pageSize) {
+		return authorRepository.findAll().page(Page.of(index, pageSize)).list();
 	}
 
 	public Author getById(Long id) {
