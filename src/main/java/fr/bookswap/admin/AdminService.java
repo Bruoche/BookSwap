@@ -8,6 +8,7 @@ import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.repository.ReviewRepository;
 import fr.bookswap.common.repository.UserRepository;
+import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -21,8 +22,8 @@ public class AdminService {
 	@Inject
 	ReviewRepository reviewRepository;
 
-	public List<User> getAllUsers() {
-		return userRepository.listAll();
+	public List<User> getAllUsers(int index, int pageSize) {
+		return userRepository.findAll().page(Page.of(index, pageSize)).list();
 	}
 
 	public User getUserById(Long id) {

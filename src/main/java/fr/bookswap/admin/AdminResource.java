@@ -6,9 +6,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import fr.bookswap.admin.dto.UserDto;
 import fr.bookswap.common.security.JwtService;
@@ -27,8 +25,8 @@ public class AdminResource {
 
     @GET
     @Path("/users")
-    public List<UserDto> getUsers() {
-		return adminService.getAllUsers()
+    public List<UserDto> getUsers(@QueryParam("index") int index, @QueryParam("pageSize") int pageSize) {
+		return adminService.getAllUsers(index, pageSize)
 			.stream()
 			.map(user -> UserDto.fromUser(user))
 			.toList();
