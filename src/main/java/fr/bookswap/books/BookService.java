@@ -7,6 +7,7 @@ import fr.bookswap.books.dto.CreateReviewRequest;
 import fr.bookswap.books.dto.ReviewResponse;
 import fr.bookswap.common.entity.Author;
 import fr.bookswap.common.entity.Book;
+import fr.bookswap.common.entity.Genre;
 import fr.bookswap.common.entity.Review;
 import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
@@ -157,7 +158,6 @@ public class BookService {
 
     public List<Review>  getReviews(Long bookId) {
         Book book = bookRepository.findById(bookId);
-        // Need to handle error with interceptors ?
         if (book == null) {
             throw new NotFoundException("Book not found with ID: " + bookId);
         }
