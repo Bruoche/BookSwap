@@ -47,6 +47,7 @@ public class BookResponse {
         dto.condition = book.condition;
         dto.isAvailableForExchange = book.isAvailableForExchange;
         dto.isAvailableForLoan = book.isAvailableForLoan;
+		dto.addedAt = book.addedAt;
 		return dto;
     }
 
