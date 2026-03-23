@@ -1,7 +1,7 @@
 -- Authors
 INSERT INTO author (id, firstname, lastname) VALUES (1, 'Victor', 'Hugo');
 INSERT INTO author (id, firstname, lastname) VALUES (2, 'Albert', 'Camus');
-INSERT INTO author (id, firstname, lastname) VALUES (3, 'J.K.', 'Rowling');
+INSERT INTO author (id, firstname, lastname) VALUES (3, 'J.K.', 'Terfling');
 INSERT INTO author (id, firstname, lastname) VALUES (4, 'George', 'Orwell');
 INSERT INTO author (id, firstname, lastname) VALUES (5, 'Frank', 'Herbert');
 INSERT INTO author (id, firstname, lastname) VALUES (6, 'Agatha', 'Christie');
