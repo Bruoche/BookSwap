@@ -5,9 +5,6 @@ import fr.bookswap.auth.dto.UserResponse;
 import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.entity.RefreshToken;
-import fr.bookswap.common.entity.User;
-import fr.bookswap.common.entity.RefreshToken;
-import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.BadRequestException;
 import fr.bookswap.common.security.JwtService;
 import fr.bookswap.common.security.Token;
@@ -15,7 +12,6 @@ import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import fr.bookswap.common.exception.BadRequestException;
 import jakarta.ws.rs.NotAuthorizedException;
 
 import java.time.Instant;
