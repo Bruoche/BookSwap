@@ -19,7 +19,6 @@ import fr.bookswap.common.exception.ConflictException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.QueryParam;
 
 import java.util.List;
 import java.util.Set;
