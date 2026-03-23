@@ -6,6 +6,8 @@ import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.entity.RefreshToken;
 import fr.bookswap.common.entity.User;
+import fr.bookswap.common.entity.RefreshToken;
+import fr.bookswap.common.entity.User;
 import fr.bookswap.common.exception.BadRequestException;
 import fr.bookswap.common.security.JwtService;
 import fr.bookswap.common.security.Token;
