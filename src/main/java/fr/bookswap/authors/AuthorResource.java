@@ -1,51 +1,42 @@
 package fr.bookswap.authors;
 
+import fr.bookswap.authors.dto.CreateAuthorRequest;
+import fr.bookswap.common.entity.Author;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.time.LocalDateTime;
-import java.util.Map;
+import java.net.URI;
+import java.util.List;
 
 @Path("/api/authors")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AuthorResource {
 
+	@Inject 
+	AuthorService authorService;
+
     @GET
-    public Response getAll() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
+    public List<Author> getAll() {
+        return authorService.getAll();
     }
 
     @GET
     @Path("/{id}")
-    public Response getDetails() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
-                .build();
+    public Author getDetails(@PathParam("id") Long id) {
+        return authorService.getById(id);
     }
 
     @POST
-    public Response add() { //TODO
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(Map.of(
-                        "timestamp", LocalDateTime.now().toString(),
-                        "status", 500,
-                        "error", "Not implemented.",
-                        "message", "This request has not yet been implemented"
-                ))
+	@RolesAllowed({"USER", "ADMIN"})
+    public Response createAuthor(@Valid CreateAuthorRequest request) {
+        Author created = authorService.createAuthor(request.toAuthor());
+		return Response.created(URI.create("/api/author/" + created.id))
+                .entity(created)
                 .build();
     }
 }
