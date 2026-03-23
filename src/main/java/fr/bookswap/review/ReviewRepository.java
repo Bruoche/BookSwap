@@ -1,16 +1,16 @@
-package fr.bookswap.common.repository;
+package fr.bookswap.review;
 
 import fr.bookswap.common.entity.Review;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
-@ApplicationScoped
 public class ReviewRepository implements PanacheRepository<Review> {
 
+    @Transactional
     public List<Review> findByBookId(Long bookId) {
-        return list("book.id = ?1", bookId);
+        return list("book_id", bookId);
     }
 
     public Double getAverageRating(Long bookId) {
@@ -19,8 +19,4 @@ public class ReviewRepository implements PanacheRepository<Review> {
                 .firstResultOptional()
                 .orElse(0.0); // Return 0.0 if no reviews exist
     }
-
-	public Long countReviewsOf(Long userId, Long bookId) {
-		return count("author.id = ?1 and book.id = ?2", userId, bookId);
-	}
 }
