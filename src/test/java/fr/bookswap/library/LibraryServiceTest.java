@@ -1,6 +1,7 @@
 package fr.bookswap.library;
 
 import fr.bookswap.common.entity.UserBook;
+import fr.bookswap.common.exception.BadRequestException;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.library.dto.BookResponse;
 import fr.bookswap.library.dto.CreateBookRequest;
@@ -8,7 +9,6 @@ import fr.bookswap.library.dto.UpdateBookRequest;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BadRequestException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
