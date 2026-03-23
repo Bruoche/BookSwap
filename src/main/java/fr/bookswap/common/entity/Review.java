@@ -12,9 +12,8 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "review")
 public class Review extends PanacheEntity {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull(message = "L'utilisateur lié est obligatoire")
-    @JoinColumn(nullable = false)
+	@OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(nullable = true)
     public User author;
 
     @ManyToOne(fetch = FetchType.LAZY)
