@@ -4,6 +4,8 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.OffsetDateTime;
 
@@ -11,8 +13,8 @@ import java.time.OffsetDateTime;
 @Table(name = "user_book")
 public class UserBook extends PanacheEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull(message = "L'utilisateur lié est obligatoire")
-    @JoinColumn(nullable = false)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(nullable = true)
     public User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,7 +45,7 @@ public class UserBook extends PanacheEntity {
     // Constructeur par défaut requis par JPA
     public UserBook() {}
 
-    public UserBook(User user, Book book, Status status, Condition condition, boolean isAvailableForExchange, boolean isAvailableForLoan) {
+    public UserBook(@NotNull(message = "L'utilisateur lié est obligatoire") User user, Book book, Status status, Condition condition, boolean isAvailableForExchange, boolean isAvailableForLoan) {
         this.user = user;
         this.book = book;
         this.status = status;
