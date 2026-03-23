@@ -2,7 +2,6 @@ package fr.bookswap.common.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
@@ -19,7 +18,7 @@ public class UserBook extends PanacheEntity {
     public User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotBlank(message = "Le livre lié est obligatoire")
+    @NotNull(message = "Le livre lié est obligatoire")
     @JoinColumn(nullable = false)
     public Book book;
 
