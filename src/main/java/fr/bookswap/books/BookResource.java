@@ -33,9 +33,11 @@ public class BookResource {
 			@QueryParam("isbn") String isbn,
             @QueryParam("author") String author,
             @QueryParam("genre") String genre,
-            @QueryParam("publicationYear") int publicationYear
+            @QueryParam("publicationYear") int publicationYear,
+			@QueryParam("index") int index, 
+			@QueryParam("pageSize") int pageSize
     ) {
-        return bookService.getAllBooks(isbn, author, genre, publicationYear)
+        return bookService.getAllBooks(isbn, author, genre, publicationYear, index, pageSize)
 			.stream()
 			.map(book -> BookListResponse.fromBook(book))
 			.toList();
