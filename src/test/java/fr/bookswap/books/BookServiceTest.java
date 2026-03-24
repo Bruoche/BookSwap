@@ -45,14 +45,14 @@ public class BookServiceTest {
     @Test
     @TestTransaction
     void getAllBooks_noFilters_returnsAllBooks() {
-        List<Book> result = bookService.getAllBooks(null, null, null, 0);
+        List<Book> result = bookService.getAllBooks(null, null, null, 0, 0, 100);
         assertTrue(result.size() >= 6);
     }
 
     @Test
     @TestTransaction
     void getAllBooks_filterByIsbn_returnsMatchingBook() {
-        List<Book> result = bookService.getAllBooks("9782070405077", null, null, 0);
+        List<Book> result = bookService.getAllBooks("9782070405077", null, null, 0, 0, 100);
         assertEquals(1, result.size());
         assertEquals("Dune", result.get(0).title);
     }
@@ -60,7 +60,7 @@ public class BookServiceTest {
     @Test
     @TestTransaction
     void getAllBooks_filterByAuthor_returnsMatchingBooks() {
-        List<Book> result = bookService.getAllBooks(null, "Hugo", null, 0);
+        List<Book> result = bookService.getAllBooks(null, "Hugo", null, 0, 0, 100);
         assertFalse(result.isEmpty());
         assertTrue(result.stream().allMatch(b ->
                 b.authors.stream().anyMatch(a ->
@@ -72,7 +72,7 @@ public class BookServiceTest {
     @Test
     @TestTransaction
     void getAllBooks_filterByGenre_returnsMatchingBooks() {
-        List<Book> result = bookService.getAllBooks(null, null, "Roman", 0);
+        List<Book> result = bookService.getAllBooks(null, null, "Roman", 0, 0, 100);
         assertFalse(result.isEmpty());
         assertTrue(result.stream().allMatch(b ->
                 b.genres.stream().anyMatch(g ->
@@ -84,7 +84,7 @@ public class BookServiceTest {
     @Test
     @TestTransaction
     void getAllBooks_filterByYear_returnsRecentBooksOnly() {
-        List<Book> result = bookService.getAllBooks(null, null, null, 1960);
+        List<Book> result = bookService.getAllBooks(null, null, null, 1960, 0, 100);
         assertTrue(result.size() >= 2);
         assertTrue(result.stream().allMatch(b -> b.publicationYear >= 1960));
     }

@@ -25,14 +25,14 @@ public class ExchangeServiceTest {
     @Test
     @TestTransaction
     void getUserExchanges_userWithExchanges_returnsList() {
-        List<Exchange> exchanges = exchangeService.getUserExchanges(1L);
+        List<Exchange> exchanges = exchangeService.getUserExchanges(1L, 0, 100);
         assertFalse(exchanges.isEmpty());
     }
 
     @Test
     @TestTransaction
     void getUserExchanges_userWithNoExchanges_returnsEmptyList() {
-        List<Exchange> exchanges = exchangeService.getUserExchanges(9999L);
+        List<Exchange> exchanges = exchangeService.getUserExchanges(9999L, 0, 100);
         assertTrue(exchanges.isEmpty());
     }
 
@@ -44,7 +44,7 @@ public class ExchangeServiceTest {
         Exchange exchange = new Exchange(requester, book, Exchange.Type.EXCHANGE);
         exchangeService.createExchange(exchange);
 
-        List<Exchange> result = exchangeService.searchUserExchanges("PENDING", 1L);
+        List<Exchange> result = exchangeService.searchUserExchanges(Exchange.Status.PENDING, 1L, 0, 100);
         assertFalse(result.isEmpty());
         result.forEach(e -> assertEquals(Exchange.Status.PENDING, e.status));
     }
@@ -52,7 +52,7 @@ public class ExchangeServiceTest {
     @Test
     @TestTransaction
     void searchUserExchanges_byAccepted_returnsEmptyWhenNoneExist() {
-        List<Exchange> result = exchangeService.searchUserExchanges("ACCEPTED", 9999L);
+        List<Exchange> result = exchangeService.searchUserExchanges(Exchange.Status.ACCEPTED, 9999L, 0, 100);
         assertTrue(result.isEmpty());
     }
 

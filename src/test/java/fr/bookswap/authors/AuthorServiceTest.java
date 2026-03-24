@@ -22,7 +22,7 @@ public class AuthorServiceTest {
 
     @Test
     void getAll_returnsAllAuthors() {
-        List<Author> authors = authorService.getAll();
+        List<Author> authors = authorService.getAll(0, 100);
         assertNotNull(authors);
         assertTrue(authors.size() >= 6);
     }

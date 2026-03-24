@@ -57,6 +57,7 @@ public class AdminResourceTest {
     void getUsers_asAdmin_returns200() {
         given()
             .header("Authorization", "Bearer " + tokenForAdmin(1L, "otman"))
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/admin/users")
             .then()
             .statusCode(200)

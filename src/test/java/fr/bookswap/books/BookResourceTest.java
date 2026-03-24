@@ -38,6 +38,7 @@ public class BookResourceTest {
     @Order(1)
     void getAll_withoutToken_returns200() {
         given()
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/books")
             .then()
             .statusCode(200)
@@ -49,6 +50,7 @@ public class BookResourceTest {
     void getAll_filterByIsbn_returnsMatchingBook() {
         given()
             .queryParam("isbn", "9782070408504")
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/books")
             .then()
             .statusCode(200)
@@ -61,6 +63,7 @@ public class BookResourceTest {
     void getAll_filterByAuthor_returnsMatchingBooks() {
         given()
             .queryParam("author", "Hugo")
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/books")
             .then()
             .statusCode(200)
@@ -73,6 +76,7 @@ public class BookResourceTest {
     void getAll_filterByGenre_returnsMatchingBooks() {
         given()
             .queryParam("genre", "Roman")
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/books")
             .then()
             .statusCode(200)
@@ -84,6 +88,7 @@ public class BookResourceTest {
     void getAll_filterByYear_returnsRecentBooks() {
         given()
             .queryParam("publicationYear", 1960)
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/books")
             .then()
             .statusCode(200)

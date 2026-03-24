@@ -38,6 +38,7 @@ public class ExchangeResourceTest {
     void getExchanges_asOwner_returnsList() {
         given()
             .header("Authorization", "Bearer " + tokenForUser(1L, "otman"))
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/exchanges")
             .then()
             .statusCode(200)
@@ -50,6 +51,7 @@ public class ExchangeResourceTest {
         given()
             .header("Authorization", "Bearer " + tokenForUser(1L, "otman"))
             .queryParam("status", "PENDING")
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/exchanges")
             .then()
             .statusCode(200)
@@ -244,6 +246,7 @@ public class ExchangeResourceTest {
     void getExchanges_asRequester_returnsList() {
         given()
             .header("Authorization", "Bearer " + tokenForUser(2L, "aminata"))
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/exchanges")
             .then()
             .statusCode(200)
@@ -256,6 +259,7 @@ public class ExchangeResourceTest {
         given()
             .header("Authorization", "Bearer " + tokenForUser(1L, "otman"))
             .queryParam("status", "REFUSED")
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/exchanges")
             .then()
             .statusCode(200)

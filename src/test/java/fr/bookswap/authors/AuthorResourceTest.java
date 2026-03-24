@@ -29,6 +29,7 @@ public class AuthorResourceTest {
     void getAll_authenticated_returns200() {
         given()
             .header("Authorization", "Bearer " + tokenForUser(1L, "otman"))
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/authors")
             .then()
             .statusCode(200)

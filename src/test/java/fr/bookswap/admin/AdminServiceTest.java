@@ -2,6 +2,7 @@ package fr.bookswap.admin;
 
 import fr.bookswap.admin.dto.UserDto;
 import fr.bookswap.common.entity.User;
+import fr.bookswap.common.exception.BadRequestException;
 import fr.bookswap.common.exception.NotFoundException;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
@@ -21,7 +22,7 @@ public class AdminServiceTest {
 
     @Test
     void getAllUsers_returnsAllUsers() {
-        List<User> users = adminService.getAllUsers();
+        List<User> users = adminService.getAllUsers(0, 100);
         assertNotNull(users);
         assertTrue(users.size() >= 3);
     }
@@ -40,26 +41,36 @@ public class AdminServiceTest {
 
     @Test
     void suspendUser_existing_setsActiveToFalse() {
-        UserDto dto = adminService.suspendUser(1L);
+        UserDto dto = adminService.suspendUser(1L, 2L);
         assertNotNull(dto);
         assertEquals("otman", dto.username);
         assertFalse(dto.active);
     }
 
     @Test
+    void suspendUser_self_throwsBadRequestException() {
+        assertThrows(BadRequestException.class, () -> adminService.suspendUser(1L, 1L));
+    }
+
+    @Test
     void suspendUser_nonExistent_throwsNotFoundException() {
-        assertThrows(NotFoundException.class, () -> adminService.suspendUser(9999L));
+        assertThrows(NotFoundException.class, () -> adminService.suspendUser(9999L, 1L));
     }
 
     @Test
     void deleteUser_existing_deletesSuccessfully() {
-        assertDoesNotThrow(() -> adminService.deleteUser(3L));
+        assertDoesNotThrow(() -> adminService.deleteUser(3L, 1L));
         assertThrows(NotFoundException.class, () -> adminService.getUserById(3L));
     }
 
     @Test
+    void deleteUser_self_throwsBadRequestException() {
+        assertThrows(BadRequestException.class, () -> adminService.deleteUser(1L, 1L));
+    }
+
+    @Test
     void deleteUser_nonExistent_throwsNotFoundException() {
-        assertThrows(NotFoundException.class, () -> adminService.deleteUser(9999L));
+        assertThrows(NotFoundException.class, () -> adminService.deleteUser(9999L, 1L));
     }
 
     // Reviews

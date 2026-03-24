@@ -39,6 +39,7 @@ public class LibraryResourceTest {
     void getAll_authenticated_returnsList() {
         given()
             .header("Authorization", "Bearer " + tokenForUser(1L, "otman"))
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/library")
             .then()
             .statusCode(200)
@@ -51,6 +52,7 @@ public class LibraryResourceTest {
         given()
             .header("Authorization", "Bearer " + tokenForUser(1L, "otman"))
             .queryParam("status", "OWNED")
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/library")
             .then()
             .statusCode(200)
@@ -64,6 +66,7 @@ public class LibraryResourceTest {
         given()
             .header("Authorization", "Bearer " + tokenForUser(2L, "aminata"))
             .queryParam("status", "WISHLIST")
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/library")
             .then()
             .statusCode(200)
@@ -270,6 +273,7 @@ public class LibraryResourceTest {
     @Order(17)
     void getPublicLibrary_existingUser_returns200() {
         given()
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/users/otman/library")
             .then()
             .statusCode(200)
@@ -280,6 +284,7 @@ public class LibraryResourceTest {
     @Order(18)
     void getPublicLibrary_nonExistentUser_returnsEmptyList() {
         given()
+            .queryParam("index", 0).queryParam("pageSize", 100)
             .when().get("/api/users/unknown/library")
             .then()
             .statusCode(200)

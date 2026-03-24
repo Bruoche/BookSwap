@@ -24,7 +24,7 @@ public class LibraryServiceTest {
     @Test
     @TestTransaction
     void findByStatus_owned_returnsOwnedBooks() {
-        List<UserBook> result = libraryService.findByStatus(UserBook.Status.OWNED, 1L);
+        List<UserBook> result = libraryService.findByStatus(UserBook.Status.OWNED, 1L, 0, 100);
         assertFalse(result.isEmpty());
         result.forEach(ub -> assertEquals(UserBook.Status.OWNED, ub.status));
     }
@@ -32,7 +32,7 @@ public class LibraryServiceTest {
     @Test
     @TestTransaction
     void findByStatus_wishlist_returnsWishlistBooks() {
-        List<UserBook> result = libraryService.findByStatus(UserBook.Status.WISHLIST, 2L);
+        List<UserBook> result = libraryService.findByStatus(UserBook.Status.WISHLIST, 2L, 0, 100);
         assertFalse(result.isEmpty());
         result.forEach(ub -> assertEquals(UserBook.Status.WISHLIST, ub.status));
     }
@@ -40,14 +40,14 @@ public class LibraryServiceTest {
     @Test
     @TestTransaction
     void findByStatus_nullStatus_returnsAllUserBooks() {
-        List<UserBook> result = libraryService.findByStatus(null, 1L);
+        List<UserBook> result = libraryService.findByStatus(null, 1L, 0, 100);
         assertTrue(result.size() >= 3);
     }
 
     @Test
     @TestTransaction
     void findByStatus_nonExistentUser_returnsEmptyList() {
-        List<UserBook> result = libraryService.findByStatus(null, 9999L);
+        List<UserBook> result = libraryService.findByStatus(null, 9999L, 0, 100);
         assertTrue(result.isEmpty());
     }
 
@@ -79,14 +79,14 @@ public class LibraryServiceTest {
     @Test
     @TestTransaction
     void getUserLibrary_existingUser_returnsBooks() {
-        List<UserBook> result = libraryService.getUserLibrary("otman");
+        List<UserBook> result = libraryService.getUserLibrary("otman", 0, 100);
         assertTrue(result.size() >= 3);
     }
 
     @Test
     @TestTransaction
     void getUserLibrary_nonExistentUser_returnsEmptyList() {
-        List<UserBook> result = libraryService.getUserLibrary("unknown");
+        List<UserBook> result = libraryService.getUserLibrary("unknown", 0, 100);
         assertTrue(result.isEmpty());
     }
 
@@ -159,6 +159,6 @@ public class LibraryServiceTest {
         request.status = UserBook.Status.WISHLIST;
         request.condition = UserBook.Condition.NEW;
         BookResponse created = libraryService.create(request, 1L);
-        assertDoesNotThrow(() -> libraryService.deleteBook(created.id));
+        assertDoesNotThrow(() -> libraryService.deleteBook(created.id, 1L));
     }
 }
