@@ -5,6 +5,7 @@ import java.util.List;
 import fr.bookswap.admin.dto.UserDto;
 import fr.bookswap.common.entity.Review;
 import fr.bookswap.common.entity.User;
+import fr.bookswap.common.exception.BadRequestException;
 import fr.bookswap.common.exception.NotFoundException;
 import fr.bookswap.common.repository.ReviewRepository;
 import fr.bookswap.common.repository.UserRepository;
@@ -35,7 +36,10 @@ public class AdminService {
 	}
 
 	@Transactional
-	public UserDto suspendUser(Long id) {
+	public UserDto suspendUser(Long id, Long adminId) {
+		if (id == adminId) {
+			throw new BadRequestException("Vous ne pouvez pas vous suspendre vous-même.");
+		}
 		User user = getUserById(id);
 		user.active = false;
 		userRepository.persist(user);
@@ -43,7 +47,10 @@ public class AdminService {
 	}
 
 	@Transactional
-	public void deleteUser(Long id) {
+	public void deleteUser(Long id, Long adminId) {
+		if (id == adminId) {
+			throw new BadRequestException("Vous ne pouvez pas vous supprimer vous-même.");
+		}
 		User user = getUserById(id);
 		userRepository.delete(user);
 	}

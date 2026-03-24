@@ -35,13 +35,13 @@ public class AdminResource {
     @PATCH
     @Path("/users/{id}/suspend")
     public UserDto suspendUser(@PathParam("id") Long id) {
-        return adminService.suspendUser(id);
+        return adminService.suspendUser(id, jwt.getUserId());
     }
 
     @DELETE
     @Path("/users/{id}")
     public Response removeUser(@PathParam("id") Long id) {
-		adminService.deleteUser(id);
+		adminService.deleteUser(id, jwt.getUserId());
         return Response.accepted().build();
     }
 
