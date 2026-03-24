@@ -1,0 +1,22 @@
+meta {
+  name: Add Review
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/books/1/reviews
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "rating": 5,
+    "comment": "Absolutely amazing book!"
+  }
+}

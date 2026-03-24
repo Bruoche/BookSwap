@@ -1,0 +1,27 @@
+meta {
+  name: Update Book
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/books/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "isbn": "9782070408504",
+    "title": "Les Miserables (Updated)",
+    "description": "Updated description.",
+    "publicationYear": 1862,
+    "coverUrl": null,
+    "authors": [1],
+    "genres": [1]
+  }
+}

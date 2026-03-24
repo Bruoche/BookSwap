@@ -1,0 +1,25 @@
+meta {
+  name: Add to Library
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/library
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "bookId": 3,
+    "status": "OWNED",
+    "condition": "NEW",
+    "isAvailableForExchange": true,
+    "isAvailableForLoan": false
+  }
+}

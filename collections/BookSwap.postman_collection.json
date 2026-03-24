@@ -1,0 +1,450 @@
+{
+	"info": {
+		"name": "BookSwap API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Full collection for the BookSwap Quarkus REST API."
+	},
+	"variable": [
+		{ "key": "baseUrl", "value": "http://localhost:8080" },
+		{ "key": "token", "value": "" },
+		{ "key": "adminToken", "value": "" }
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/api/auth/register",
+						"auth": { "type": "noauth" },
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\",\n  \"email\": \"testuser@example.com\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Login (User)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('token', json.token);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/api/auth/login",
+						"auth": { "type": "noauth" },
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Login (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('adminToken', json.token);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/api/auth/login",
+						"auth": { "type": "noauth" },
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"otman\",\n  \"password\": \"password123\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('token', json.token);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/api/auth/refresh",
+						"auth": { "type": "noauth" },
+						"description": "Uses the HttpOnly refreshToken cookie set by Login."
+					}
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/api/auth/me"
+					}
+				},
+				{
+					"name": "Edit Profile",
+					"request": {
+						"method": "PUT",
+						"url": "{{baseUrl}}/api/auth/me",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"newemail@example.com\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "PATCH",
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/password?old_password=password123&new_password=newpass123",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "password"],
+							"query": [
+								{ "key": "old_password", "value": "password123" },
+								{ "key": "new_password", "value": "newpass123" }
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Authors",
+			"item": [
+				{
+					"name": "List Authors",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/authors?index=0&pageSize=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "authors"],
+							"query": [
+								{ "key": "index", "value": "0" },
+								{ "key": "pageSize", "value": "20" }
+							]
+						},
+						"auth": { "type": "noauth" }
+					}
+				},
+				{
+					"name": "Get Author by ID",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/api/authors/1",
+						"auth": { "type": "noauth" }
+					}
+				},
+				{
+					"name": "Create Author",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/api/authors",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstname\": \"Jules\",\n  \"lastname\": \"Verne\"\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Books",
+			"item": [
+				{
+					"name": "List Books",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/books?index=0&pageSize=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "books"],
+							"query": [
+								{ "key": "index", "value": "0" },
+								{ "key": "pageSize", "value": "20" },
+								{ "key": "isbn", "value": "", "disabled": true },
+								{ "key": "author", "value": "", "disabled": true },
+								{ "key": "genre", "value": "", "disabled": true },
+								{ "key": "publicationYear", "value": "", "disabled": true }
+							]
+						},
+						"auth": { "type": "noauth" }
+					}
+				},
+				{
+					"name": "Get Book by ID",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/api/books/1",
+						"auth": { "type": "noauth" }
+					}
+				},
+				{
+					"name": "Create Book",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/api/books",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"isbn\": \"9781234567890\",\n  \"title\": \"My New Book\",\n  \"description\": \"A great book about great things.\",\n  \"publicationYear\": 2024,\n  \"coverUrl\": null,\n  \"authors\": [1],\n  \"genres\": [1]\n}"
+						}
+					}
+				},
+				{
+					"name": "Update Book",
+					"request": {
+						"method": "PUT",
+						"url": "{{baseUrl}}/api/books/1",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"isbn\": \"9782070408504\",\n  \"title\": \"Les Miserables (Updated)\",\n  \"description\": \"Updated description.\",\n  \"publicationYear\": 1862,\n  \"coverUrl\": null,\n  \"authors\": [1],\n  \"genres\": [1]\n}"
+						}
+					}
+				},
+				{
+					"name": "Delete Book",
+					"request": {
+						"method": "DELETE",
+						"url": "{{baseUrl}}/api/books/1",
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+						}
+					}
+				},
+				{
+					"name": "List Reviews",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/api/books/1/reviews",
+						"auth": { "type": "noauth" }
+					}
+				},
+				{
+					"name": "Add Review",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/api/books/1/reviews",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating\": 5,\n  \"comment\": \"Absolutely amazing book!\"\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Library",
+			"item": [
+				{
+					"name": "My Library",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/library?index=0&pageSize=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "library"],
+							"query": [
+								{ "key": "index", "value": "0" },
+								{ "key": "pageSize", "value": "20" },
+								{ "key": "status", "value": "OWNED", "disabled": true }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Library Entry",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/api/library/1"
+					}
+				},
+				{
+					"name": "Add to Library",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/api/library",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bookId\": 3,\n  \"status\": \"OWNED\",\n  \"condition\": \"NEW\",\n  \"isAvailableForExchange\": true,\n  \"isAvailableForLoan\": false\n}"
+						}
+					}
+				},
+				{
+					"name": "Update Library Entry",
+					"request": {
+						"method": "PUT",
+						"url": "{{baseUrl}}/api/library/1",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"READ\",\n  \"condition\": \"WORN\",\n  \"isAvailableForExchange\": false,\n  \"isAvailableForLoan\": true\n}"
+						}
+					}
+				},
+				{
+					"name": "Delete Library Entry",
+					"request": {
+						"method": "DELETE",
+						"url": "{{baseUrl}}/api/library/1"
+					}
+				},
+				{
+					"name": "Public Library (by username)",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/users/otman/library?index=0&pageSize=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "otman", "library"],
+							"query": [
+								{ "key": "index", "value": "0" },
+								{ "key": "pageSize", "value": "20" }
+							]
+						},
+						"auth": { "type": "noauth" }
+					}
+				}
+			]
+		},
+		{
+			"name": "Exchanges",
+			"item": [
+				{
+					"name": "List Exchanges",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/exchanges?index=0&pageSize=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "exchanges"],
+							"query": [
+								{ "key": "index", "value": "0" },
+								{ "key": "pageSize", "value": "20" },
+								{ "key": "status", "value": "PENDING", "disabled": true }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Exchange by ID",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/api/exchanges/1"
+					}
+				},
+				{
+					"name": "Create Exchange",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/api/exchanges",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bookId\": 7,\n  \"type\": \"EXCHANGE\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Accept Exchange",
+					"request": {
+						"method": "PATCH",
+						"url": "{{baseUrl}}/api/exchanges/1/accept"
+					}
+				},
+				{
+					"name": "Refuse Exchange",
+					"request": {
+						"method": "PATCH",
+						"url": "{{baseUrl}}/api/exchanges/1/refuse"
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"auth": {
+				"type": "bearer",
+				"bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+			},
+			"item": [
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users?index=0&pageSize=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users"],
+							"query": [
+								{ "key": "index", "value": "0" },
+								{ "key": "pageSize", "value": "20" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Suspend User",
+					"request": {
+						"method": "PATCH",
+						"url": "{{baseUrl}}/api/admin/users/2/suspend"
+					}
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"url": "{{baseUrl}}/api/admin/users/2"
+					}
+				},
+				{
+					"name": "Delete Review",
+					"request": {
+						"method": "DELETE",
+						"url": "{{baseUrl}}/api/admin/reviews/1"
+					}
+				}
+			]
+		}
+	]
+}

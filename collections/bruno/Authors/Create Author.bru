@@ -1,0 +1,22 @@
+meta {
+  name: Create Author
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/authors
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "firstname": "Jules",
+    "lastname": "Verne"
+  }
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Refuse Exchange
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/exchanges/1/refuse
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Suspend User
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/api/admin/users/1/suspend
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}

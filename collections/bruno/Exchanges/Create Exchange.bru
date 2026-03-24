@@ -1,0 +1,22 @@
+meta {
+  name: Create Exchange
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/exchanges
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "bookId": 1,
+    "type": "EXCHANGE"
+  }
+}

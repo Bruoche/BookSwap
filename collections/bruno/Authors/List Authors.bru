@@ -1,0 +1,16 @@
+meta {
+  name: List Authors
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/authors?index=0&pageSize=20
+  body: none
+  auth: none
+}
+
+params:query {
+  index: 0
+  pageSize: 20
+}

@@ -1,0 +1,16 @@
+meta {
+  name: Public Library
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/users/otman/library?index=0&pageSize=20
+  body: none
+  auth: none
+}
+
+params:query {
+  index: 0
+  pageSize: 20
+}

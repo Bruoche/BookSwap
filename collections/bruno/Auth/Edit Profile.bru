@@ -1,0 +1,22 @@
+meta {
+  name: Edit Profile
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{baseUrl}}/api/auth/me
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "username": "testuser",
+    "email": "newemail@example.com"
+  }
+}

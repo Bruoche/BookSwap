@@ -1,0 +1,20 @@
+meta {
+  name: List Books
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/books?index=0&pageSize=20
+  body: none
+  auth: none
+}
+
+params:query {
+  index: 0
+  pageSize: 20
+  ~isbn:
+  ~author:
+  ~genre:
+  ~publicationYear:
+}

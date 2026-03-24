@@ -1,0 +1,24 @@
+meta {
+  name: Update Library Entry
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/library/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "status": "READ",
+    "condition": "WORN",
+    "isAvailableForExchange": false,
+    "isAvailableForLoan": true
+  }
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Accept Exchange
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/api/exchanges/1/accept
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

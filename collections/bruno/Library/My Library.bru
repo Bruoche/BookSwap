@@ -1,0 +1,21 @@
+meta {
+  name: My Library
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/library?index=0&pageSize=20
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  index: 0
+  pageSize: 20
+  ~status:
+}
