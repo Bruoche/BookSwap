@@ -4,6 +4,8 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -18,8 +20,8 @@ public class Exchange extends PanacheEntity {
     public User requester;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull(message = "Le possesseur est obligatoire")
-    @JoinColumn(nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(nullable = true)
     public User owner;
 
     @ManyToOne(fetch = FetchType.LAZY)

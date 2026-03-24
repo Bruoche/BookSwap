@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 @Table(name = "user_book")
 public class UserBook extends PanacheEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(nullable = true)
     public User user;
 
