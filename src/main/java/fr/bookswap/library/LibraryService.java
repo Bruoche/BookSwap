@@ -13,7 +13,7 @@ import fr.bookswap.library.dto.UpdateBookRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.BadRequestException;
+import fr.bookswap.common.exception.BadRequestException;
 
 @ApplicationScoped
 public class LibraryService {
