@@ -5,6 +5,8 @@ docker compose up
 
 > Swagger ui disponible à : http://localhost:8080/q/swagger-ui/
 
+Projet déployé à l'adresse : https://bookswap-3jl8.onrender.com/api/books?pageSize=3
+
 ## Requests:
 
 
