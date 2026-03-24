@@ -69,7 +69,8 @@ public class LibraryService {
 	}
 
 	@Transactional
-	public void deleteBook(Long id) {
+	public void deleteBook(Long id, Long userId) {
+		getBookById(id, userId);
 		libraryRepostory.deleteById(id);
 	}
 }

@@ -63,7 +63,7 @@ public class LibraryResource {
     @DELETE
     @Path("/{id}")
     public Response deleteBook(@PathParam("id") Long id) {
-        libraryService.deleteBook(id);
+        libraryService.deleteBook(id, jwt.getUserId());
 		return Response.ok().build();
     }
 }
