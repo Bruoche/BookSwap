@@ -1,5 +1,10 @@
 # exchange-manager-api
 
+## Lancement application
+docker compose up
+
+> Swagger ui disponible à : http://localhost:8080/q/swagger-ui/
+
 ## Requests:
 
 
