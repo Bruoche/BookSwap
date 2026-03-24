@@ -6,9 +6,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import fr.bookswap.admin.dto.UserDto;
 import fr.bookswap.common.security.JwtService;
