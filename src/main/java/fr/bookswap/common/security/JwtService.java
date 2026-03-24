@@ -38,6 +38,9 @@ public class JwtService {
 	 * @return token
      */
     public Token generateTokens(User user) {
+		if (!user.active) {
+			throw new UnauthorizedException("Le compte est suspendu.");
+		}
 		String authToken = generateAuthToken(user);
 		String refreshToken = generateRefreshToken(user);
 		return new Token(authToken, refreshToken, user);
