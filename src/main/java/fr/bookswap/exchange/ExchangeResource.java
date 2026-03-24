@@ -27,14 +27,18 @@ public class ExchangeResource {
     JwtService jwt;  // Token JWT de l'utilisateur connecté
 
     @GET
-    public List<ExchangeResponse> getExchanges(@QueryParam("status") String status) {
-        if (status != null && !status.isBlank()) {
-			return exchangeService.searchUserExchanges(status, jwt.getUserId())
+    public List<ExchangeResponse> getExchanges(
+			@QueryParam("status") Exchange.Status status, 
+			@QueryParam("index") int index, 
+			@QueryParam("pageSize") int pageSize
+		) {
+        if (status != null) {
+			return exchangeService.searchUserExchanges(status, jwt.getUserId(), index, pageSize)
 				.stream()
 				.map(exchange -> ExchangeResponse.fromExchange(exchange))
 				.toList();
 		}
-        return exchangeService.getUserExchanges(jwt.getUserId())
+        return exchangeService.getUserExchanges(jwt.getUserId(), index, pageSize)
 			.stream()
 			.map(exchange -> ExchangeResponse.fromExchange(exchange))
 			.toList();

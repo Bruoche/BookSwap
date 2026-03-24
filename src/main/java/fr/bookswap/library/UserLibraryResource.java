@@ -10,6 +10,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 
 @Path("/api/users/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -21,8 +22,12 @@ public class UserLibraryResource {
 	
     @GET
     @Path("/{username}/library")
-    public List<BookResponse> getPublic(@PathParam("username") String username) {
-        return libraryService.getUserLibrary(username)
+    public List<BookResponse> getPublic(
+		@PathParam("username") String username,
+		@QueryParam("index") int index, 
+		@QueryParam("pageSize") int pageSize
+	) {
+        return libraryService.getUserLibrary(username, index, pageSize)
 			.stream()
 			.map(book -> BookResponse.fromUserBook(book))
 			.toList();

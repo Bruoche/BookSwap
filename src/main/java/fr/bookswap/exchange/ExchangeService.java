@@ -19,12 +19,12 @@ public class ExchangeService {
     @Inject
     ExchangeRepository exchangeRepository;
 
-    public List<Exchange> getUserExchanges(Long userId) {
-        return exchangeRepository.listAllForUser(userId);
+    public List<Exchange> getUserExchanges(Long userId, int index, int pageSize) {
+        return exchangeRepository.listAllForUser(userId, index, pageSize);
     }
 
-    public List<Exchange> searchUserExchanges(String keyword, Long userId) {
-        return exchangeRepository.searchByStatusForUser(Exchange.Status.valueOf(keyword), userId);
+    public List<Exchange> searchUserExchanges(Exchange.Status keyword, Long userId, int index, int pageSize) {
+        return exchangeRepository.searchByStatusForUser(keyword, userId, index, pageSize);
     }
 
     public Exchange getUserExchangeById(Long id, Long userId) {

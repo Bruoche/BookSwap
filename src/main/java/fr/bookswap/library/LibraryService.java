@@ -21,8 +21,8 @@ public class LibraryService {
 	@Inject
 	LibraryRepository libraryRepostory;
 
-	public List<UserBook> findByStatus(UserBook.Status status, Long userId) {
-		return libraryRepostory.listByStatus(status, userId);
+	public List<UserBook> findByStatus(UserBook.Status status, Long userId, int index, int pageSize) {
+		return libraryRepostory.listByStatus(status, userId, index, pageSize);
 	}
 
 	public UserBook getBookById(Long id, Long userId) {
@@ -33,8 +33,8 @@ public class LibraryService {
 		return book;
 	}
 
-	public List<UserBook> getUserLibrary(String username) {
-		return libraryRepostory.listForUser(username);
+	public List<UserBook> getUserLibrary(String username, int index, int pageSize) {
+		return libraryRepostory.listForUser(username, index, pageSize);
 	}
 
 	@Transactional

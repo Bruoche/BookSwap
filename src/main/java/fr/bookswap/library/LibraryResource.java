@@ -29,8 +29,12 @@ public class LibraryResource {
 	JwtService jwt;
 
     @GET
-    public List<BookResponse> getAll(@QueryParam("status") UserBook.Status status) {
-		return libraryService.findByStatus(status, jwt.getUserId())
+    public List<BookResponse> getAll(
+		@QueryParam("status") UserBook.Status status, 
+		@QueryParam("index") int index, 
+		@QueryParam("pageSize") int pageSize
+	) {
+		return libraryService.findByStatus(status, jwt.getUserId(), index, pageSize)
 			.stream()
 			.map(book -> BookResponse.fromUserBook(book))
 			.toList();

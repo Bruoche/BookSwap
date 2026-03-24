@@ -51,12 +51,19 @@ public class BookService {
         return BookDetailsResponse.fromBook(book, averageRating);
     }
 
-    public List<Book> getAllBooks(String isbn, String authors, String genres, int year) {
+    public List<Book> getAllBooks(
+		String isbn, 
+		String authors, 
+		String genres, 
+		int year, 
+		int index, 
+		int pageSize
+	) {
 		List<Book> unfiltered;
 		if (isbn == null) {
-			unfiltered = bookRepository.searchByYear(year);
+			unfiltered = bookRepository.searchByYear(year, index, pageSize);
 		} else {
-			unfiltered = bookRepository.searchByIsbnAndYear(isbn, year);
+			unfiltered = bookRepository.searchByIsbnAndYear(isbn, year, index, pageSize);
 		}
         return unfiltered
 			.stream() // On filtre après requête car logique trop complexe pour requête sql maintenable
@@ -66,7 +73,10 @@ public class BookService {
 				}
 				for (String searchedAuthor : authors.split(" ")) {
 					for (Author bookAuthor : book.authors) {
-						if (bookAuthor.firstname.toLowerCase().contains(searchedAuthor.toLowerCase()) || bookAuthor.lastname.toLowerCase().contains(searchedAuthor.toLowerCase())) {
+						if (
+							bookAuthor.firstname.toLowerCase().contains(searchedAuthor.toLowerCase()) 
+							|| bookAuthor.lastname.toLowerCase().contains(searchedAuthor.toLowerCase())
+						) {
 							return true;
 						}
 					}

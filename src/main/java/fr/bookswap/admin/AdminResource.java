@@ -25,8 +25,8 @@ public class AdminResource {
 
     @GET
     @Path("/users")
-    public List<UserDto> getUsers() {
-		return adminService.getAllUsers()
+    public List<UserDto> getUsers(@QueryParam("index") int index, @QueryParam("pageSize") int pageSize) {
+		return adminService.getAllUsers(index, pageSize)
 			.stream()
 			.map(user -> UserDto.fromUser(user))
 			.toList();
