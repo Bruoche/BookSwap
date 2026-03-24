@@ -50,7 +50,7 @@ public class Exchange extends PanacheEntity {
     // Constructeur par défaut requis par JPA
     public Exchange() {}
 
-    public Exchange(User requester, UserBook userBook, Type type) {
+    public Exchange(@NotNull(message = "L'utilisateur est obligatoire") User requester, UserBook userBook, Type type) {
         this.requester = requester;
 		this.owner = userBook.user;
 		this.book = userBook;
